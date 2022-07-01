@@ -1,4 +1,3 @@
-# YooAsset-Samples
-### 运行说明
+# 魔改YooAsset
 
-通过Boot场景来启动游戏！
+目标：配合Huatuo制作Mod。
