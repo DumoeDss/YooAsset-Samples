@@ -6,6 +6,12 @@
       "source": "builtin",
       "dependencies": {}
     },
+    "com.unity.assetbundlebrowser": {
+      "version": "file:AssetBundles-Browser-1.7.0",
+      "depth": 0,
+      "source": "embedded",
+      "dependencies": {}
+    },
     "com.unity.ext.nunit": {
       "version": "1.0.6",
       "depth": 1,
