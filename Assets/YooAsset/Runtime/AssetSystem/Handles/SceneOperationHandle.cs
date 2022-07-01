@@ -95,7 +95,7 @@ namespace YooAsset
 		/// <summary>
 		/// 异步卸载子场景
 		/// </summary>
-		public UnloadSceneOperation UnloadAsync()
+		public UnloadSceneOperation UnloadAsync(YooAssets yooAssets)
 		{
 			// 如果句柄无效
 			if (IsValid == false)
@@ -118,7 +118,7 @@ namespace YooAsset
 
 			// 卸载子场景
 			Scene sceneObject = SceneObject;
-			AssetSystem.UnloadSubScene(Provider);
+			yooAssets.AssetSystem.UnloadSubScene(Provider);
 			{
 				var operation = new UnloadSceneOperation(sceneObject);
 				OperationSystem.StartOperaiton(operation);

@@ -43,17 +43,17 @@ namespace YooAsset
 		/// <summary>
 		/// 获取补丁清单文件完整名称
 		/// </summary>
-		public static string GetPatchManifestFileName(int resourceVersion)
+		public static string GetPatchManifestFileName(string _manifestName)
 		{
-			return $"{Setting.PatchManifestFileName}_{resourceVersion}.bytes";
+			return $"{_manifestName}.bytes";
 		}
 
 		/// <summary>
 		/// 获取补丁清单哈希文件完整名称
 		/// </summary>
-		public static string GetPatchManifestHashFileName(int resourceVersion)
+		public static string GetPatchManifestHashFileName(string _manifestName)
 		{
-			return $"{Setting.PatchManifestFileName}_{resourceVersion}.hash";
+			return $"{_manifestName}.hash";
 		}
 	}
 }

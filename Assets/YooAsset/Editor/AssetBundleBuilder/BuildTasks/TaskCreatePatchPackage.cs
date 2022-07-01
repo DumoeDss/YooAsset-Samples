@@ -35,22 +35,15 @@ namespace YooAsset.Editor
 
 			// 拷贝补丁清单文件
 			{
-				string sourcePath = $"{buildParameters.PipelineOutputDirectory}/{YooAssetSettingsData.GetPatchManifestFileName(resourceVersion)}";
-				string destPath = $"{packageDirectory}/{YooAssetSettingsData.GetPatchManifestFileName(resourceVersion)}";
+				string sourcePath = $"{buildParameters.PipelineOutputDirectory}/{YooAssetSettingsData.GetPatchManifestFileName("PatchManifest_" + resourceVersion)}";
+				string destPath = $"{packageDirectory}/{YooAssetSettingsData.GetPatchManifestFileName("PatchManifest_" + resourceVersion)}";
 				EditorTools.CopyFile(sourcePath, destPath, true);
 			}
 
 			// 拷贝补丁清单哈希文件
 			{
-				string sourcePath = $"{buildParameters.PipelineOutputDirectory}/{YooAssetSettingsData.GetPatchManifestHashFileName(resourceVersion)}";
-				string destPath = $"{packageDirectory}/{YooAssetSettingsData.GetPatchManifestHashFileName(resourceVersion)}";
-				EditorTools.CopyFile(sourcePath, destPath, true);
-			}
-
-			// 拷贝静态版本文件
-			{
-				string sourcePath = $"{buildParameters.PipelineOutputDirectory}/{YooAssetSettings.VersionFileName}";
-				string destPath = $"{packageDirectory}/{YooAssetSettings.VersionFileName}";
+				string sourcePath = $"{buildParameters.PipelineOutputDirectory}/{YooAssetSettingsData.GetPatchManifestHashFileName("PatchManifest_" + resourceVersion)}";
+				string destPath = $"{packageDirectory}/{YooAssetSettingsData.GetPatchManifestHashFileName("PatchManifest_" + resourceVersion)}";
 				EditorTools.CopyFile(sourcePath, destPath, true);
 			}
 
@@ -70,7 +63,7 @@ namespace YooAsset.Editor
 
 			// 拷贝所有补丁文件
 			int progressValue = 0;
-			PatchManifest patchManifest = AssetBundleBuilderHelper.LoadPatchManifestFile(buildParameters.PipelineOutputDirectory, buildParameters.Parameters.BuildVersion);
+			PatchManifest patchManifest = AssetBundleBuilderHelper.LoadPatchManifestFile(buildParameters.PipelineOutputDirectory, "PatchManifest_" + buildParameters.Parameters.BuildVersion);
 			int patchFileTotalCount = patchManifest.BundleList.Count;
 			foreach (var patchBundle in patchManifest.BundleList)
 			{

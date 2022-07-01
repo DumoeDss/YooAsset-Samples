@@ -24,7 +24,7 @@ namespace YooAsset
 		private UnityWebRequest _webRequest;
 
 
-		public AssetBundleWebLoader(BundleInfo bundleInfo) : base(bundleInfo)
+		public AssetBundleWebLoader(BundleInfo bundleInfo, AssetSystem assetSystem) : base(bundleInfo, assetSystem)
 		{
 		}
 

@@ -45,7 +45,7 @@ namespace YooAsset.Editor
 					throw new Exception($"补丁包已经存在：{packageDirectory}");
 
 				// 检测内置资源分类标签是否一致
-				var oldPatchManifest = AssetBundleBuilderHelper.GetOldPatchManifest(buildParameters.PipelineOutputDirectory);
+				var oldPatchManifest = AssetBundleBuilderHelper.GetOldPatchManifest(buildParameters.PipelineOutputDirectory, buildParameters.Parameters.BuildVersion);
 				if (buildParameters.Parameters.BuildinTags != oldPatchManifest.BuildinTags)
 					throw new Exception($"增量更新时内置资源标签必须一致：{buildParameters.Parameters.BuildinTags} != {oldPatchManifest.BuildinTags}");
 			}

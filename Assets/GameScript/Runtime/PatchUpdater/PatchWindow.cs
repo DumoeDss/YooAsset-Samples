@@ -72,7 +72,6 @@ public class PatchWindow : MonoBehaviour
 		_eventGroup.AddListener<PatchEventMessageDefine.PatchStatesChange>(OnHandleEvent);
 		_eventGroup.AddListener<PatchEventMessageDefine.FoundUpdateFiles>(OnHandleEvent);
 		_eventGroup.AddListener<PatchEventMessageDefine.DownloadProgressUpdate>(OnHandleEvent);
-		_eventGroup.AddListener<PatchEventMessageDefine.StaticVersionUpdateFailed>(OnHandleEvent);
 		_eventGroup.AddListener<PatchEventMessageDefine.PatchManifestUpdateFailed>(OnHandleEvent);
 		_eventGroup.AddListener<PatchEventMessageDefine.WebFileDownloadFailed>(OnHandleEvent);
 	}
@@ -121,14 +120,6 @@ public class PatchWindow : MonoBehaviour
 			string currentSizeMB = (message.CurrentDownloadSizeBytes / 1048576f).ToString("f1");
 			string totalSizeMB = (message.TotalDownloadSizeBytes / 1048576f).ToString("f1");
 			_tips.text = $"{message.CurrentDownloadCount}/{message.TotalDownloadCount} {currentSizeMB}MB/{totalSizeMB}MB";
-		}
-		else if (msg is PatchEventMessageDefine.StaticVersionUpdateFailed)
-		{
-			System.Action callback = () =>
-			{
-				PatchUpdater.HandleOperation(EPatchOperation.TryUpdateStaticVersion);
-			};
-			ShowMessageBox($"Failed to update static version, please check the network status.", callback);
 		}
 		else if (msg is PatchEventMessageDefine.PatchManifestUpdateFailed)
 		{

@@ -118,7 +118,28 @@ namespace YooAsset.Editor
 			build.assetBundleName = BundleName;
 			build.assetBundleVariant = string.Empty;
 			build.assetNames = GetBuildinAssetPaths();
+           
 			return build;
 		}
+
+		public void SetBundleName()
+        {
+			foreach (var item in BuildinAssets)
+			{
+				SetBundleName(item.AssetPath, BundleName);
+			}
+		}
+
+		public void SetBundleName(string path,string bundleName)
+		{
+			AssetImporter importer = AssetImporter.GetAtPath(path);
+			UnityEngine. Debug.Log("assetPath:" + importer.assetPath);
+			UnityEngine.Debug.Log("name:" + importer.name);
+			UnityEngine.Debug.Log("bundleName:" + bundleName);
+			importer.assetBundleName = bundleName;
+			AssetDatabase.SaveAssets();
+			AssetDatabase.Refresh();
+		}
+
 	}
 }

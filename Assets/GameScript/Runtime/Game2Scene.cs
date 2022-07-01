@@ -11,9 +11,11 @@ public class Game2Scene : MonoBehaviour
 	public GameObject CanvasRoot;
 	private readonly List<AssetOperationHandle> _cachedAssetOperationHandles = new List<AssetOperationHandle>(1000);
 	private SceneOperationHandle _subSceneHandle = null;
-
+	YooAssets YooAssets;
 	void Start()
 	{
+		YooAssets = YooAssetsManager.Instance.GetYooAssets("Test");
+
 		YooAssets.UnloadUnusedAssets();
 
 		// 初始化窗口
@@ -82,7 +84,7 @@ public class Game2Scene : MonoBehaviour
 			{
 				if(_subSceneHandle != null)
 				{
-					_subSceneHandle.UnloadAsync();
+					_subSceneHandle.UnloadAsync(YooAssets);
 					_subSceneHandle = null;
 				}				
 			});

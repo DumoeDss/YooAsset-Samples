@@ -4,6 +4,7 @@ using YooAsset;
 public class FsmDownloadWebFiles : IFsmNode
 {
 	public string Name { private set; get; } = nameof(FsmDownloadWebFiles);
+	public YooAssets YooAssets { get { return YooAssetsManager.Instance.GetYooAssets("Test"); } }
 
 	void IFsmNode.OnEnter()
 	{

@@ -7,12 +7,19 @@ namespace YooAsset
 {
 	internal class RemoteDebuggerInRuntime : MonoBehaviour
 	{
+		public void SetAssetSystem(YooAssets yooAssets)
+		{
+			assetSystem = yooAssets.AssetSystem;
+
+		}
+		static AssetSystem assetSystem;
+
 #if UNITY_EDITOR
 		/// <summary>
 		/// 编辑器下获取报告的回调
 		/// </summary>
 		public static Action<int, DebugReport> EditorHandleDebugReportCallback;
-
+	
 		/// <summary>
 		/// 编辑器下请求报告数据
 		/// </summary>
@@ -20,7 +27,7 @@ namespace YooAsset
 		{
 			if(UnityEditor.EditorApplication.isPlaying)
 			{
-				var report = AssetSystem.GetDebugReport();
+				var report = assetSystem.GetDebugReport();
 				EditorHandleDebugReportCallback?.Invoke(0, report);
 			}
 		}
@@ -39,7 +46,7 @@ namespace YooAsset
 			YooLogger.Log($"On handle remote command : {command.CommandType} Param : {command.CommandParam}");
 			if (command.CommandType == (int)ERemoteCommand.SampleOnce)
 			{
-				var debugReport = AssetSystem.GetDebugReport();
+				var debugReport = assetSystem.GetDebugReport();
 				var data = DebugReport.Serialize(debugReport);
 				PlayerConnection.instance.Send(RemoteDebuggerDefine.kMsgSendPlayerToEditor, data);
 			}

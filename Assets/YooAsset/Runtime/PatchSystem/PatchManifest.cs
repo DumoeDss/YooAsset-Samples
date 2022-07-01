@@ -145,10 +145,10 @@ namespace YooAsset
 		{
 			if (Assets.TryGetValue(assetPath, out PatchAsset patchAsset))
 			{
-				int bundleID = patchAsset.BundleID;
-				if (bundleID >= 0 && bundleID < BundleList.Count)
+				string bundleID = patchAsset.BundleID;
+				var patchBundle = BundleList.Find(_ => _.Id == bundleID);
+				if (patchBundle != null)
 				{
-					var patchBundle = BundleList[bundleID];
 					return patchBundle.BundleName;
 				}
 				else
@@ -173,9 +173,9 @@ namespace YooAsset
 				List<string> result = new List<string>(patchAsset.DependIDs.Length);
 				foreach (var dependID in patchAsset.DependIDs)
 				{
-					if (dependID >= 0 && dependID < BundleList.Count)
+					var dependPatchBundle = BundleList.Find(_ => _.Id == dependID);
+					if (dependPatchBundle!=null)
 					{
-						var dependPatchBundle = BundleList[dependID];
 						result.Add(dependPatchBundle.BundleName);
 					}
 					else

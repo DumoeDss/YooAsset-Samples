@@ -84,10 +84,11 @@ namespace YooAsset
 		protected bool IsWaitForAsyncComplete { private set; get; } = false;
 		private readonly List<OperationHandleBase> _handles = new List<OperationHandleBase>();
 
-
-		public ProviderBase(AssetInfo assetInfo)
+		internal AssetSystem assetSystem;
+		public ProviderBase(AssetInfo assetInfo, AssetSystem assetSystem)
 		{
 			MainAssetInfo = assetInfo;
+			this.assetSystem = assetSystem;
 		}
 
 		/// <summary>

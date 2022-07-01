@@ -1,10 +1,12 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using YooAsset;
 
 internal class FsmPatchInit : IFsmNode
 {
 	public string Name { private set; get; } = nameof(FsmPatchInit);
+	public YooAssets YooAssets { get { return YooAssetsManager.Instance.GetYooAssets("Test"); } }
 
 	void IFsmNode.OnEnter()
 	{
@@ -23,8 +25,8 @@ internal class FsmPatchInit : IFsmNode
 
 	private IEnumerator Begin()
 	{
-		yield return new WaitForSecondsRealtime(0.5f);
+		yield return new WaitForSecondsRealtime(1f);
 
-		FsmManager.Transition(nameof(FsmUpdateStaticVersion));
+		FsmManager.Transition(nameof(FsmUpdateManifest));
 	}
 }

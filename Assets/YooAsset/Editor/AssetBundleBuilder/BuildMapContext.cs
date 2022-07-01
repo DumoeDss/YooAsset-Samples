@@ -93,6 +93,19 @@ namespace YooAsset.Editor
 		}
 
 		/// <summary>
+		/// 获取构建管线里需要的数据
+		/// </summary>
+		public void SetBundleName()
+		{
+			List<UnityEditor.AssetBundleBuild> builds = new List<UnityEditor.AssetBundleBuild>(BundleInfos.Count);
+			foreach (var bundleInfo in BundleInfos)
+			{
+				if (!bundleInfo.IsRawFile)
+					bundleInfo.SetBundleName();
+			}
+		}
+
+		/// <summary>
 		/// 是否包含资源包
 		/// </summary>
 		public bool IsContainsBundle(string bundleName)

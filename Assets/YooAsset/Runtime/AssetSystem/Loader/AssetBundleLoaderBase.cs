@@ -42,12 +42,13 @@ namespace YooAsset
 		private readonly List<ProviderBase> _providers = new List<ProviderBase>(100);
 		internal AssetBundle CacheBundle { set; get; }
 
-
-		public AssetBundleLoaderBase(BundleInfo bundleInfo)
+		internal AssetSystem assetSystem;
+		public AssetBundleLoaderBase(BundleInfo bundleInfo, AssetSystem assetSystem)
 		{
 			MainBundleInfo = bundleInfo;
 			RefCount = 0;
 			Status = EStatus.None;
+			this.assetSystem = assetSystem;
 		}
 
 		/// <summary>
@@ -148,7 +149,7 @@ namespace YooAsset
 			}
 
 			// 从列表里移除Providers
-			AssetSystem.RemoveBundleProviders(_providers);
+			assetSystem.RemoveBundleProviders(_providers);
 			_providers.Clear();
 		}
 

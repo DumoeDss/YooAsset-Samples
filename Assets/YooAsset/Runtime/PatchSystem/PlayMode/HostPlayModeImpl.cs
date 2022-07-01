@@ -38,31 +38,11 @@ namespace YooAsset
 		}
 
 		/// <summary>
-		/// 异步更新资源版本号
-		/// </summary>
-		public UpdateStaticVersionOperation UpdateStaticVersionAsync(int timeout)
-		{
-			var operation = new HostPlayModeUpdateStaticVersionOperation(this, timeout);
-			OperationSystem.StartOperaiton(operation);
-			return operation;
-		}
-
-		/// <summary>
 		/// 异步更新补丁清单
 		/// </summary>
-		public UpdateManifestOperation UpdatePatchManifestAsync(int resourceVersion, int timeout)
+		public UpdateManifestOperation UpdatePatchManifestAsync(string manifestName, int timeout)
 		{
-			var operation = new HostPlayModeUpdateManifestOperation(this, resourceVersion, timeout);
-			OperationSystem.StartOperaiton(operation);
-			return operation;
-		}
-		
-		/// <summary>
-		/// 异步更新补丁清单（弱联网）
-		/// </summary>
-		public UpdateManifestOperation WeaklyUpdatePatchManifestAsync(int resourceVersion)
-		{
-			var operation = new HostPlayModeWeaklyUpdateManifestOperation(this, resourceVersion);
+			var operation = new HostPlayModeUpdateManifestOperation(this, manifestName, timeout);
 			OperationSystem.StartOperaiton(operation);
 			return operation;
 		}
@@ -70,9 +50,9 @@ namespace YooAsset
 		/// <summary>
 		/// 异步更新资源包裹
 		/// </summary>
-		public UpdatePackageOperation UpdatePackageAsync(int resourceVersion, int timeout)
+		public UpdatePackageOperation UpdatePackageAsync(string manifestName, int timeout)
 		{
-			var operation = new HostPlayModeUpdatePackageOperation(this, resourceVersion, timeout);
+			var operation = new HostPlayModeUpdatePackageOperation(this, manifestName, timeout);
 			OperationSystem.StartOperaiton(operation);
 			return operation;
 		}

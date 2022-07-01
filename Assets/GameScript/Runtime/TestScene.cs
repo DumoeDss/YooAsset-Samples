@@ -6,8 +6,7 @@ using YooAsset;
 
 public class TestScene : MonoBehaviour
 {
-	public YooAssets.EPlayMode PlayMode = YooAssets.EPlayMode.EditorSimulateMode;
-
+	public EPlayMode PlayMode = EPlayMode.EditorSimulateMode;
 	void Awake()
 	{
 		Application.targetFrameRate = 60;
@@ -17,29 +16,35 @@ public class TestScene : MonoBehaviour
 	{
 		GUIConsole.OnGUI();
 	}
-
+	YooAssets YooAssets;
 	IEnumerator Start()
 	{
 		Debug.Log($"资源系统运行模式：{PlayMode}");
 
+		YooAssets = YooAssetsManager.Instance.GetYooAssets("Test");
+
 		// 编辑器模拟模式
-		if (PlayMode == YooAssets.EPlayMode.EditorSimulateMode)
+		if (PlayMode == EPlayMode.EditorSimulateMode)
 		{
-			var createParameters = new YooAssets.EditorSimulateModeParameters();
-			createParameters.LocationServices = new DefaultLocationServices("Assets/GameRes");
-			yield return YooAssets.InitializeAsync(createParameters);
+			var createParameters = new EditorSimulateModeParameters();
+			createParameters.LocationServices = new DefaultLocationServices( "Assets/GameRes");
+			YooAssetsManager.Instance.InitializeAsync(createParameters);
+			if (!YooAssets.IsInitialized)
+				yield return YooAssets.InitializeAsync(createParameters, PlayMode);
 		}
 
 		// 单机模式
-		if (PlayMode == YooAssets.EPlayMode.OfflinePlayMode)
+		if (PlayMode == EPlayMode.OfflinePlayMode)
 		{
-			var createParameters = new YooAssets.OfflinePlayModeParameters();
+			var createParameters = new OfflinePlayModeParameters();
 			createParameters.LocationServices = new DefaultLocationServices("Assets/GameRes");
-			yield return YooAssets.InitializeAsync(createParameters);
+			YooAssetsManager.Instance.InitializeAsync(createParameters);
+			if (!YooAssets.IsInitialized)
+				yield return YooAssets.InitializeAsync(createParameters, PlayMode);
 		}
 
 		// 联机模式
-		if (PlayMode == YooAssets.EPlayMode.HostPlayMode)
+		if (PlayMode == EPlayMode.HostPlayMode)
 		{
 			throw new NotImplementedException();
 		}

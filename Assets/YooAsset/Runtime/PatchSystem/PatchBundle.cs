@@ -7,6 +7,11 @@ namespace YooAsset
 	internal class PatchBundle
 	{
 		/// <summary>
+		/// 资源包ID
+		/// </summary>
+		public string Id;
+
+		/// <summary>
 		/// 资源包名称
 		/// </summary>
 		public string BundleName;
@@ -54,8 +59,9 @@ namespace YooAsset
 
 
 
-		public PatchBundle(string bundleName, string hash, string crc, long sizeBytes, string[] tags)
+		public PatchBundle(string id, string bundleName, string hash, string crc, long sizeBytes, string[] tags)
 		{
+			Id = id;
 			BundleName = bundleName;
 			Hash = hash;
 			CRC = crc;

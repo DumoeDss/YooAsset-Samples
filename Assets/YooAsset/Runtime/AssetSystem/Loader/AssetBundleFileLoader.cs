@@ -26,7 +26,7 @@ namespace YooAsset
 		private AssetBundleCreateRequest _cacheRequest;
 
 
-		public AssetBundleFileLoader(BundleInfo bundleInfo) : base(bundleInfo)
+		public AssetBundleFileLoader(BundleInfo bundleInfo, AssetSystem assetSystem) : base(bundleInfo, assetSystem)
 		{
 		}
 
@@ -114,10 +114,10 @@ namespace YooAsset
 				// Load assetBundle file
 				if (MainBundleInfo.IsEncrypted)
 				{
-					if (AssetSystem.DecryptionServices == null)
+					if (assetSystem.DecryptionServices == null)
 						throw new Exception($"{nameof(AssetBundleFileLoader)} need {nameof(IDecryptionServices)} : {MainBundleInfo.BundleName}");
 
-					ulong offset = AssetSystem.DecryptionServices.GetFileOffset();
+					ulong offset = assetSystem.DecryptionServices.GetFileOffset();
 					if (_isWaitForAsyncComplete)
 						CacheBundle = AssetBundle.LoadFromFile(_fileLoadPath, 0, offset);
 					else

@@ -10,11 +10,6 @@ public enum EPatchOperation
 	BeginDownloadWebFiles,
 
 	/// <summary>
-	/// 尝试再次更新静态版本
-	/// </summary>
-	TryUpdateStaticVersion,
-
-	/// <summary>
 	/// 尝试再次更新补丁清单
 	/// </summary>
 	TryUpdatePatchManifest,

@@ -119,7 +119,7 @@ namespace YooAsset.Editor
 		/// <summary>
 		/// 加载补丁清单文件
 		/// </summary>
-		internal static PatchManifest LoadPatchManifestFile(string fileDirectory, int resourceVersion)
+		internal static PatchManifest LoadPatchManifestFile(string fileDirectory, string resourceVersion)
 		{
 			string filePath = $"{fileDirectory}/{YooAssetSettingsData.GetPatchManifestFileName(resourceVersion)}";
 			if (File.Exists(filePath) == false)
@@ -134,12 +134,9 @@ namespace YooAsset.Editor
 		/// <summary>
 		/// 获取旧的补丁清单
 		/// </summary>
-		internal static PatchManifest GetOldPatchManifest(string pipelineOutputDirectory)
+		internal static PatchManifest GetOldPatchManifest(string pipelineOutputDirectory,int buildVersion)
 		{
-			string staticVersionFilePath = $"{pipelineOutputDirectory}/{YooAssetSettings.VersionFileName}";
-			string staticVersionContent = FileUtility.ReadFile(staticVersionFilePath);
-			int staticVersion = int.Parse(staticVersionContent);
-			return LoadPatchManifestFile(pipelineOutputDirectory, staticVersion);
+			return LoadPatchManifestFile(pipelineOutputDirectory, "PatchManifest_" + buildVersion);
 		}
 	}
 }

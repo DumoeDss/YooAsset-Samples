@@ -22,11 +22,12 @@ public class LoadAssetsByTagOperation<TObject> : GameAsyncOperation where TObjec
 	/// 资源对象集合
 	/// </summary>
 	public List<TObject> AssetObjects { private set; get; }
+	YooAssets yooAssets;
 
-
-	public LoadAssetsByTagOperation(string tag)
+	public LoadAssetsByTagOperation(YooAssets yooAssets,string tag)
 	{
 		_tag = tag;
+		this.yooAssets = yooAssets;
 	}
 	protected override void OnStart()
 	{
@@ -39,11 +40,11 @@ public class LoadAssetsByTagOperation<TObject> : GameAsyncOperation where TObjec
 
 		if (_steps == ESteps.LoadAssets)
 		{
-			AssetInfo[] assetInfos = YooAssets.GetAssetInfos(_tag);
+			AssetInfo[] assetInfos = yooAssets.GetAssetInfos(_tag);
 			_handles = new List<AssetOperationHandle>(assetInfos.Length);
 			foreach (var assetInfo in assetInfos)
 			{
-				var handle = YooAssets.LoadAssetAsync(assetInfo);
+				var handle = yooAssets.LoadAssetAsync(assetInfo);
 				_handles.Add(handle);
 			}
 			_steps = ESteps.CheckResult;

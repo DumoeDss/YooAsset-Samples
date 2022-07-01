@@ -14,7 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   BuildVersion: 100
   BuildMode: 0
-  BuildTags: buildin;
+  BuildTags: 
   CompressOption: 2
   EncyptionClassName: EncryptionNone
   AppendExtension: 0

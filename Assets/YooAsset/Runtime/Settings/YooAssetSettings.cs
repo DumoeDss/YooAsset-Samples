@@ -30,9 +30,5 @@ namespace YooAsset
 		/// </summary>
 		public const string ReportFileName = "BuildReport";
 
-		/// <summary>
-		/// 静态版本文件
-		/// </summary>
-		public const string VersionFileName = "StaticVersion.bytes";
 	}
 }

@@ -103,6 +103,39 @@ namespace YooAsset.Editor
 		/// <summary>
 		/// 开始构建
 		/// </summary>
+		public bool RunBundle(BuildParameters buildParameters)
+		{
+			// 清空旧数据
+			_buildContext.ClearAllContext();
+
+			// 构建参数
+			var buildParametersContext = new BuildParametersContext(buildParameters);
+			_buildContext.SetContextObject(buildParametersContext);
+
+			// 执行构建流程
+			List<IBuildTask> pipeline = new List<IBuildTask>
+			{
+				new TaskPrepare(), //前期准备工作
+				new TaskGetBuildMap(), //获取构建列表
+				new TaskSetBundleName(), //开始执行构建
+			};
+
+			if (buildParameters.BuildMode == EBuildMode.SimulateBuild)
+				BuildRunner.EnableLog = false;
+			else
+				BuildRunner.EnableLog = true;
+
+			bool succeed = BuildRunner.Run(pipeline, _buildContext);
+			if (succeed)
+				Debug.Log($"{buildParameters.BuildMode} pipeline build succeed !");
+			else
+				Debug.LogWarning($"{buildParameters.BuildMode} pipeline build failed !");
+			return succeed;
+		}
+
+		/// <summary>
+		/// 开始构建
+		/// </summary>
 		public bool Run(BuildParameters buildParameters)
 		{
 			// 清空旧数据

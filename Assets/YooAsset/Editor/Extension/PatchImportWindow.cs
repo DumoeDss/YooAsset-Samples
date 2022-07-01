@@ -70,11 +70,6 @@ namespace YooAsset.Editor
 				string destPath = $"{AssetBundleBuilderHelper.GetStreamingAssetsFolderPath()}/{manifestFileName}.hash";
 				EditorTools.CopyFile(sourcePath, destPath, true);
 			}
-			{
-				string sourcePath = $"{outputDirectory}/{YooAssetSettings.VersionFileName}";
-				string destPath = $"{AssetBundleBuilderHelper.GetStreamingAssetsFolderPath()}/{YooAssetSettings.VersionFileName}";
-				EditorTools.CopyFile(sourcePath, destPath, true);
-			}
 
 			// 拷贝文件列表
 			int fileCount = 0;

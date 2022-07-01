@@ -18,37 +18,11 @@ namespace YooAsset.Editor
 		/// </summary>
 		public int MaxReportCount { private set; get; }
 
-		public int MinRangeValue
-		{
-			get
-			{
-				return 0;
-			}
-		}
-		public int MaxRangeValue
-		{
-			get
-			{
-				int index = _reportList.Count - 1;
-				if (index < 0)
-					index = 0;
-				return index;
-			}
-		}
-
 
 		public RemotePlayerSession(int playerId, int maxReportCount = 1000)
 		{
 			PlayerId = playerId;
 			MaxReportCount = maxReportCount;
-		}
-
-		/// <summary>
-		/// 清理缓存数据
-		/// </summary>
-		public void ClearDebugReport()
-		{
-			_reportList.Clear();
 		}
 
 		/// <summary>
@@ -65,29 +39,13 @@ namespace YooAsset.Editor
 		}
 
 		/// <summary>
-		/// 获取调试报告
+		/// 获取最近一次的报告
 		/// </summary>
-		public DebugReport GetDebugReport(int rangeIndex)
+		public DebugReport GetLatestReport()
 		{
 			if (_reportList.Count == 0)
 				return null;
-			if (rangeIndex < 0 || rangeIndex >= _reportList.Count)
-				return null;
-			return _reportList[rangeIndex];
-		}
-
-		/// <summary>
-		/// 规范索引值
-		/// </summary>
-		public int ClampRangeIndex(int rangeIndex)
-		{
-			if (rangeIndex < 0)
-				return 0;
-
-			if (rangeIndex > MaxRangeValue)
-				return MaxRangeValue;
-
-			return rangeIndex;
+			return _reportList[_reportList.Count - 1];
 		}
 	}
 }

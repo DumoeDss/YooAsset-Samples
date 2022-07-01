@@ -121,6 +121,10 @@ namespace YooAsset.Editor
 					AssetBundleBuilderSettingData.Setting.AppendExtension = _appendExtensionToggle.value;
 				});
 
+				// 设置BundleName
+				var bundleButton = root.Q<Button>("SetBundleName");
+				bundleButton.clicked += BundleButton_clicked; ;
+
 				// 构建按钮
 				var buildButton = root.Q<Button>("Build");
 				buildButton.clicked += BuildButton_clicked; ;
@@ -146,6 +150,20 @@ namespace YooAsset.Editor
 			_compressionField.SetEnabled(enableElement);
 			_appendExtensionToggle.SetEnabled(enableElement);
 		}
+		private void BundleButton_clicked()
+		{
+			var buildMode = AssetBundleBuilderSettingData.Setting.BuildMode;
+			if (EditorUtility.DisplayDialog("提示", $"重新设置BundleName！", "Yes", "No"))
+			{
+				EditorTools.ClearUnityConsole();
+				EditorApplication.delayCall += ExecuteBundle;
+			}
+			else
+			{
+				Debug.LogWarning("[Build] 打包已经取消");
+			}
+		}
+
 		private void BuildButton_clicked()
 		{
 			var buildMode = AssetBundleBuilderSettingData.Setting.BuildMode;
@@ -158,6 +176,31 @@ namespace YooAsset.Editor
 			{
 				Debug.LogWarning("[Build] 打包已经取消");
 			}
+		}
+
+		/// <summary>
+		/// 执行构建
+		/// </summary>
+		private void ExecuteBundle()
+		{
+			var buildMode = (EBuildMode)_buildModeField.value;
+
+			string defaultOutputRoot = AssetBundleBuilderHelper.GetDefaultOutputRoot();
+			BuildParameters buildParameters = new BuildParameters();
+			buildParameters.OutputRoot = defaultOutputRoot;
+			buildParameters.BuildTarget = _buildTarget;
+			buildParameters.BuildMode = buildMode;
+			buildParameters.BuildVersion = _buildVersionField.value;
+			buildParameters.BuildinTags = _buildinTagsField.value;
+			buildParameters.VerifyBuildingResult = true;
+			buildParameters.EnableAddressable = AssetBundleCollectorSettingData.Setting.EnableAddressable;
+			buildParameters.AppendFileExtension = _appendExtensionToggle.value;
+			buildParameters.CopyBuildinTagFiles = buildMode == EBuildMode.ForceRebuild;
+			buildParameters.EncryptionServices = CreateEncryptionServicesInstance();
+			buildParameters.CompressOption = (ECompressOption)_compressionField.value;
+
+			AssetBundleBuilder builder = new AssetBundleBuilder();
+			builder.RunBundle(buildParameters);
 		}
 
 		/// <summary>

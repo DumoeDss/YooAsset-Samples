@@ -26,7 +26,7 @@ namespace YooAsset.Editor
 		private void CopyBuildinFilesToStreaming(string pipelineOutputDirectory, int buildVersion)
 		{
 			// 加载补丁清单
-			PatchManifest patchManifest = AssetBundleBuilderHelper.LoadPatchManifestFile(pipelineOutputDirectory, buildVersion);
+			PatchManifest patchManifest = AssetBundleBuilderHelper.LoadPatchManifestFile(pipelineOutputDirectory, "PatchManifest_" + buildVersion);
 
 			// 拷贝文件列表
 			foreach (var patchBundle in patchManifest.BundleList)
@@ -41,22 +41,15 @@ namespace YooAsset.Editor
 
 			// 拷贝清单文件
 			{
-				string sourcePath = $"{pipelineOutputDirectory}/{YooAssetSettingsData.GetPatchManifestFileName(buildVersion)}";
-				string destPath = $"{AssetBundleBuilderHelper.GetStreamingAssetsFolderPath()}/{YooAssetSettingsData.GetPatchManifestFileName(buildVersion)}";
+				string sourcePath = $"{pipelineOutputDirectory}/{YooAssetSettingsData.GetPatchManifestFileName("PatchManifest_" + buildVersion)}";
+				string destPath = $"{AssetBundleBuilderHelper.GetStreamingAssetsFolderPath()}/{YooAssetSettingsData.GetPatchManifestFileName("PatchManifest_" + buildVersion)}";
 				EditorTools.CopyFile(sourcePath, destPath, true);
 			}
 
 			// 拷贝清单哈希文件
 			{
-				string sourcePath = $"{pipelineOutputDirectory}/{YooAssetSettingsData.GetPatchManifestHashFileName(buildVersion)}";
-				string destPath = $"{AssetBundleBuilderHelper.GetStreamingAssetsFolderPath()}/{YooAssetSettingsData.GetPatchManifestHashFileName(buildVersion)}";
-				EditorTools.CopyFile(sourcePath, destPath, true);
-			}
-
-			// 拷贝静态版本文件
-			{
-				string sourcePath = $"{pipelineOutputDirectory}/{YooAssetSettings.VersionFileName}";
-				string destPath = $"{AssetBundleBuilderHelper.GetStreamingAssetsFolderPath()}/{YooAssetSettings.VersionFileName}";
+				string sourcePath = $"{pipelineOutputDirectory}/{YooAssetSettingsData.GetPatchManifestHashFileName("PatchManifest_" + buildVersion)}";
+				string destPath = $"{AssetBundleBuilderHelper.GetStreamingAssetsFolderPath()}/{YooAssetSettingsData.GetPatchManifestHashFileName("PatchManifest_" + buildVersion)}";
 				EditorTools.CopyFile(sourcePath, destPath, true);
 			}
 

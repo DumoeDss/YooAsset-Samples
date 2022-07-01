@@ -1,11 +1,13 @@
 ﻿
+using YooAsset;
+
 public interface IFsmNode
 {
 	/// <summary>
 	/// 节点名称
 	/// </summary>
 	string Name { get; }
-
+	YooAssets YooAssets { get;  }
 	void OnEnter();
 	void OnUpdate();
 	void OnExit();

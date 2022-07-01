@@ -31,7 +31,6 @@ public static class PatchUpdater
 
 			// 注意：按照先后顺序添加流程节点
 			FsmManager.AddNode(new FsmPatchInit());
-			FsmManager.AddNode(new FsmUpdateStaticVersion());
 			FsmManager.AddNode(new FsmUpdateManifest());
 			FsmManager.AddNode(new FsmCreateDownloader());
 			FsmManager.AddNode(new FsmDownloadWebFiles());
@@ -52,10 +51,6 @@ public static class PatchUpdater
 		if (operation == EPatchOperation.BeginDownloadWebFiles)
 		{
 			FsmManager.Transition(nameof(FsmDownloadWebFiles));
-		}
-		else if(operation == EPatchOperation.TryUpdateStaticVersion)
-		{
-			FsmManager.Transition(nameof(FsmUpdateStaticVersion));
 		}
 		else if (operation == EPatchOperation.TryUpdatePatchManifest)
 		{

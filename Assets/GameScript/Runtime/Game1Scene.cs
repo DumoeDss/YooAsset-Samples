@@ -13,9 +13,11 @@ public class Game1Scene : MonoBehaviour
 	private readonly List<AssetOperationHandle> _cachedAssetOperationHandles = new List<AssetOperationHandle>(1000);
 	private readonly List<SubAssetsOperationHandle> _cachedSubAssetsOperationHandles = new List<SubAssetsOperationHandle>(1000);
 	private int _npcIndex = 0;
+	YooAssets YooAssets;
 
 	void Start()
 	{
+		YooAssets= YooAssetsManager.Instance.GetYooAssets("Test");
 		YooAssets.UnloadUnusedAssets();
 
 		// 初始化窗口
@@ -49,11 +51,11 @@ public class Game1Scene : MonoBehaviour
 		resVersion.text = $"资源版本 : {YooAssets.GetResourceVersion()}";
 
 		var playMode = CanvasRoot.transform.Find("play_mode/label").GetComponent<Text>();
-		if (BootScene.GamePlayMode == YooAssets.EPlayMode.EditorSimulateMode)
+		if (BootScene.GamePlayMode == EPlayMode.EditorSimulateMode)
 			playMode.text = "编辑器下模拟模式";
-		else if (BootScene.GamePlayMode == YooAssets.EPlayMode.OfflinePlayMode)
+		else if (BootScene.GamePlayMode == EPlayMode.OfflinePlayMode)
 			playMode.text = "离线运行模式";
-		else if (BootScene.GamePlayMode == YooAssets.EPlayMode.HostPlayMode)
+		else if (BootScene.GamePlayMode == EPlayMode.HostPlayMode)
 			playMode.text = "网络运行模式";
 		else
 			throw new NotImplementedException();

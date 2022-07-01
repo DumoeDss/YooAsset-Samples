@@ -3,9 +3,9 @@ namespace YooAsset
 {
 	public class AddressLocationServices : ILocationServices
 	{
-		string ILocationServices.ConvertLocationToAssetPath(string location)
+		string ILocationServices.ConvertLocationToAssetPath(YooAssets yooAssets, string location)
 		{
-			return YooAssets.MappingToAssetPath(location);
+			return yooAssets.MappingToAssetPath(location);
 		}
 	}
 }

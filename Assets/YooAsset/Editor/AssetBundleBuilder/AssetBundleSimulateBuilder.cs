@@ -24,7 +24,7 @@ namespace YooAsset.Editor
 			if (buildResult)
 			{
 				string pipelineOutputDirectory = AssetBundleBuilderHelper.MakePipelineOutputDirectory(buildParameters.OutputRoot, buildParameters.BuildTarget);
-				_manifestFilePath = $"{pipelineOutputDirectory}_{EBuildMode.SimulateBuild}/{YooAssetSettingsData.GetPatchManifestFileName(buildParameters.BuildVersion)}";
+				_manifestFilePath = $"{pipelineOutputDirectory}_{EBuildMode.SimulateBuild}/{YooAssetSettingsData.GetPatchManifestFileName("PatchManifest_" + buildParameters.BuildVersion)}";
 			}
 			else
 			{

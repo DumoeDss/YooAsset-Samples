@@ -181,7 +181,7 @@ namespace YooAsset
 	/// <summary>
 	/// 哈希工具类
 	/// </summary>
-	internal static class HashUtility
+	public static class HashUtility
 	{
 		private static string ToString(byte[] hashBytes)
 		{
@@ -326,9 +326,10 @@ namespace YooAsset
 		/// </summary>
 		public static string StreamCRC32(Stream stream)
 		{
-			CRC32Algorithm hash = new CRC32Algorithm();
-			byte[] hashBytes = hash.ComputeHash(stream);
-			return ToString(hashBytes);
+			return Crc32Helper.CalcHash(stream);
+			//CRC32Algorithm hash = new CRC32Algorithm();
+			//byte[] hashBytes = hash.ComputeHash(stream);
+			//return ToString(hashBytes);
 		}
 
 		/// <summary>
@@ -336,9 +337,11 @@ namespace YooAsset
 		/// </summary>
 		public static string BytesCRC32(byte[] buffer)
 		{
-			CRC32Algorithm hash = new CRC32Algorithm();
-			byte[] hashBytes = hash.ComputeHash(buffer);
-			return ToString(hashBytes);
+			return Crc32Helper.CalcHash(buffer);
+
+			//CRC32Algorithm hash = new CRC32Algorithm();
+			//byte[] hashBytes = hash.ComputeHash(buffer);
+			//return ToString(hashBytes);
 		}
 		#endregion
 	}
