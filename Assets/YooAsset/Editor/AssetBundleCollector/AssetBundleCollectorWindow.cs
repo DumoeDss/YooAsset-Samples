@@ -326,6 +326,10 @@ namespace YooAsset.Editor
 			elementTop.style.flexDirection = FlexDirection.Row;
 			element.Add(elementTop);
 
+			VisualElement elementMiddle = new VisualElement();
+			elementMiddle.style.flexDirection = FlexDirection.Row;
+			element.Add(elementMiddle);
+
 			VisualElement elementBottom = new VisualElement();
 			elementBottom.style.flexDirection = FlexDirection.Row;
 			element.Add(elementBottom);
@@ -359,12 +363,25 @@ namespace YooAsset.Editor
 				label.style.minWidth = 63;
 			}
 
-			// Bottom VisualElement
 			{
-				var label = new Label();
-				label.style.width = 90;
-				elementBottom.Add(label);
+				var textField = new TextField();
+				textField.name = "TextField0";
+				textField.label = "BundleName";
+				textField.style.unityTextAlign = TextAnchor.MiddleLeft;
+				textField.style.flexGrow = 1f;
+				elementBottom.Add(textField);
+				var label = textField.Q<Label>();
+				textField.style.width = 200;
+
+				label.style.minWidth = 63;
 			}
+
+			//// Bottom VisualElement
+			//{
+			//	var label = new Label();
+			//	label.style.width = 90;
+			//	elementBottom.Add(label);
+			//}
 			{
 				var popupField = new PopupField<string>(_collectorTypeList, 0);
 				popupField.name = "PopupField0";
@@ -457,6 +474,15 @@ namespace YooAsset.Editor
 				RemoveCollectorBtn_clicked(collector);
 			};
 
+			// BundleName
+			var textFiled0 = element.Q<TextField>("TextField0");
+			textFiled0.SetValueWithoutNotify(collector.BundleName);
+			textFiled0.RegisterValueChangedCallback(evt =>
+			{
+				collector.BundleName = evt.newValue;
+				AssetBundleCollectorSettingData.ModifyCollector(selectGroup, collector);
+			});
+
 			// Collector Path
 			var objectField1 = element.Q<ObjectField>("ObjectField1");
 			objectField1.SetValueWithoutNotify(collectObject);
@@ -464,12 +490,19 @@ namespace YooAsset.Editor
 			{
 				collector.CollectPath = AssetDatabase.GetAssetPath(evt.newValue);
 				objectField1.value.name = collector.CollectPath;
+                if (string.IsNullOrEmpty(textFiled0.value))
+                {
+					textFiled0.value=collector.CollectPath;
+					collector.BundleName = textFiled0.value;
+				}
 				AssetBundleCollectorSettingData.ModifyCollector(selectGroup, collector);
 				if (foldout.value)
 				{
 					RefreshFoldout(foldout, selectGroup, collector);
 				}
 			});
+
+
 
 			// Collector Type
 			var popupField0 = element.Q<PopupField<string>>("PopupField0");

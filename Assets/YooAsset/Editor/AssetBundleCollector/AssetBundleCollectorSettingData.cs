@@ -373,6 +373,7 @@ namespace YooAsset.Editor
 		{
 			AssetBundleCollector collector = new AssetBundleCollector();
 			collector.CollectPath = collectPath;
+			collector.BundleName = collectPath;
 			group.Collectors.Add(collector);
 			IsDirty = true;
 		}

@@ -15,7 +15,7 @@ namespace YooAsset.Editor
 	{
 		string IPackRule.GetBundleName(PackRuleData data)
 		{
-			return StringUtility.RemoveExtension(data.AssetPath);
+			return StringUtility.RemoveExtension(data.BundleName);
 		}
 	}
 
@@ -32,7 +32,24 @@ namespace YooAsset.Editor
 
 		string IPackRule.GetBundleName(PackRuleData data)
 		{
-			return Path.GetDirectoryName(data.AssetPath);
+			//return data.BundleName+"_"+ Path.GetDirectoryName(data.AssetPath);
+			string assetPath = data.AssetPath;//.Replace(data.CollectPath, string.Empty);
+			UnityEngine.Debug.Log(assetPath);
+			assetPath = assetPath.TrimStart('/');
+			string[] splits = assetPath.Split('/');
+			if (splits.Length > 1)
+			{
+				if (Path.HasExtension(splits[splits.Length-2]))
+					throw new Exception($"Not found root directory : {assetPath}");
+				string bundleName = $"{data.BundleName}/{splits[splits.Length - 2]}";
+				return bundleName;
+            }
+            else
+            {
+
+				throw new Exception($"Can't set assets to root directory : {assetPath}");
+
+			}
 		}
 	}
 
@@ -54,7 +71,7 @@ namespace YooAsset.Editor
 			{
 				if (Path.HasExtension(splits[0]))
 					throw new Exception($"Not found root directory : {assetPath}");
-				string bundleName = $"{data.CollectPath}/{splits[0]}";
+				string bundleName = $"{data.BundleName}/{splits[0]}";
 				return bundleName;
 			}
 			else
@@ -72,7 +89,7 @@ namespace YooAsset.Editor
 	{
 		string IPackRule.GetBundleName(PackRuleData data)
 		{
-			return StringUtility.RemoveExtension(data.CollectPath);
+			return data.BundleName;// StringUtility.RemoveExtension(data.CollectPath);
 		}
 	}
 
@@ -84,7 +101,7 @@ namespace YooAsset.Editor
 	{
 		string IPackRule.GetBundleName(PackRuleData data)
 		{
-			return data.GroupName;
+			return data.BundleName;//data.GroupName;
 		}
 	}
 

@@ -82,10 +82,9 @@ public class BootScene : MonoBehaviour
 		string directory = System.IO.Path.GetDirectoryName(Application.dataPath);
 		return $"{directory}/Bundles/StandaloneWindows64/UnityManifest_SimulateBuild/PatchManifest_100.bytes";
 	}
+	public string hostServerIP = "http://192.168.53.154:1024";
 	private string GetHostServerURL()
 	{
-		//string hostServerIP = "http://10.0.2.2"; //安卓模拟器地址
-		string hostServerIP = "http://192.168.53.59:1024";
 		string gameVersion = "100";
 
 #if UNITY_EDITOR

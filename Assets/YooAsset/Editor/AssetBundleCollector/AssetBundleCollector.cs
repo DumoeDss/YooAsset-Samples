@@ -14,6 +14,8 @@ namespace YooAsset.Editor
 		/// </summary>
 		public string CollectPath = string.Empty;
 
+		public string BundleName = string.Empty;
+
 		/// <summary>
 		/// 收集器类型
 		/// </summary>
@@ -235,7 +237,7 @@ namespace YooAsset.Editor
 			// 根据规则设置获取资源包名称
 			{
 				IPackRule packRuleInstance = AssetBundleCollectorSettingData.GetPackRuleInstance(PackRuleName);
-				string bundleName = packRuleInstance.GetBundleName(new PackRuleData(assetPath, CollectPath, group.GroupName));
+				string bundleName = packRuleInstance.GetBundleName(new PackRuleData(assetPath, CollectPath,BundleName, group.GroupName));
 				return EditorTools.GetRegularPath(bundleName).ToLower();
 			}
 		}
