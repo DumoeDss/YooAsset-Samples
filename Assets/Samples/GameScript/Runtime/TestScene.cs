@@ -27,7 +27,7 @@ public class TestScene : MonoBehaviour
 		if (PlayMode == EPlayMode.EditorSimulateMode)
 		{
 			var createParameters = new EditorSimulateModeParameters();
-			createParameters.LocationServices = new DefaultLocationServices( "Assets/GameRes");
+			createParameters.LocationServices = new AddressLocationServices();
 			YooAssetsManager.Instance.InitializeAsync(createParameters);
 			if (!YooAssets.IsInitialized)
 				yield return YooAssets.InitializeAsync(createParameters, PlayMode);
@@ -37,7 +37,7 @@ public class TestScene : MonoBehaviour
 		if (PlayMode == EPlayMode.OfflinePlayMode)
 		{
 			var createParameters = new OfflinePlayModeParameters();
-			createParameters.LocationServices = new DefaultLocationServices("Assets/GameRes");
+			createParameters.LocationServices = new AddressLocationServices();
 			YooAssetsManager.Instance.InitializeAsync(createParameters);
 			if (!YooAssets.IsInitialized)
 				yield return YooAssets.InitializeAsync(createParameters, PlayMode);

@@ -178,7 +178,7 @@ namespace YooAsset
 				return string.Empty;
 
 			if (string.IsNullOrEmpty(_streamingPath))
-				_streamingPath = PathHelper.MakeStreamingLoadPath(_patchBundle.Hash);
+				_streamingPath = PathHelper.MakeStreamingLoadPath($"{_patchBundle.BundleName}_{_patchBundle.Hash}");
 			return _streamingPath;
 		}
 
@@ -191,7 +191,7 @@ namespace YooAsset
 				return string.Empty;
 
 			if (string.IsNullOrEmpty(_cachePath))
-				_cachePath = SandboxHelper.MakeCacheFilePath(_patchBundle.Hash);
+				_cachePath = SandboxHelper.MakeCacheFilePath($"{_patchBundle.BundleName}_{_patchBundle.Hash}");
 			return _cachePath;
 		}
 

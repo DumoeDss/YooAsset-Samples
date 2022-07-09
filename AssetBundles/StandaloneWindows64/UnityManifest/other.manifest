@@ -1,0 +1,30 @@
+ManifestFileVersion: 0
+CRC: 1835984097
+Hashes:
+  AssetFileHash:
+    serializedVersion: 2
+    Hash: ac67820c6fc70fe7aff8feb29555cb69
+  TypeTreeHash:
+    serializedVersion: 2
+    Hash: c29c357128feff56790ec9816c4fc93d
+HashAppended: 0
+ClassTypes:
+- Class: 28
+  Script: {instanceID: 0}
+- Class: 213
+  Script: {instanceID: 0}
+- Class: 687078895
+  Script: {instanceID: 0}
+SerializeReferenceClassIdentifiers: []
+Assets:
+- Assets/Samples/GameRes/Texture/bg.png
+- Assets/Samples/GameRes/UIAtlas/UnityPacker/unityAtlas.spriteatlas
+- Assets/Samples/GameRes/Texture/logo.png
+- Assets/Samples/GameArt/UISprite/UIIcons/Icon_Deathkiss_128.png
+- Assets/Samples/GameRes/UIAtlas/TexturePacker/tpAtlas.png
+- Assets/Samples/GameArt/UISprite/UIIcons/Icon_Fireball_128.png
+- Assets/Samples/GameArt/UISprite/UIIcons/Icon_Shield_128.png
+- Assets/Samples/GameArt/UISprite/UIIcons/Icon_Leafs_128.png
+- Assets/Samples/GameArt/UISprite/UIIcons/Icon_Sword_128.png
+- Assets/Samples/GameArt/UISprite/UIIcons/Icon_Arrows_128.png
+Dependencies: []

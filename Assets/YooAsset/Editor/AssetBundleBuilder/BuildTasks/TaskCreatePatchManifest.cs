@@ -27,9 +27,9 @@ namespace YooAsset.Editor
 
 			// 创建新补丁清单
 			PatchManifest patchManifest = new PatchManifest();
-			patchManifest.EnableAddressable = buildParameters.Parameters.EnableAddressable;
 			patchManifest.ResourceVersion = buildParameters.Parameters.BuildVersion;
 			patchManifest.BuildinTags = buildParameters.Parameters.BuildinTags;
+			//patchManifest.PackageID=
 			patchManifest.BundleList = GetAllPatchBundle(buildParameters, buildMapContext, encryptionContext);
 			patchManifest.AssetList = GetAllPatchAsset(buildParameters, buildMapContext, patchManifest);
 
@@ -129,10 +129,8 @@ namespace YooAsset.Editor
 				foreach (var assetInfo in assetInfos)
 				{
 					PatchAsset patchAsset = new PatchAsset();
-					if (buildParameters.Parameters.EnableAddressable)
-						patchAsset.Address = assetInfo.Address;
-					else
-						patchAsset.Address = string.Empty;
+					patchAsset.Address = assetInfo.Address;
+
 					patchAsset.AssetPath = assetInfo.AssetPath;
 					patchAsset.AssetTags = assetInfo.AssetTags.ToArray();
 					patchAsset.BundleID = GetAssetBundleID(assetInfo.GetBundleName(), patchManifest);

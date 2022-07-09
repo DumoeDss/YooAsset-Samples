@@ -11,7 +11,7 @@ namespace YooAsset.Editor
 		public string BundleName;
 		public string GroupName;
 
-		public PackRuleData(string assetPath)
+		public PackRuleData(string assetPath, string groupName)
 		{
 			AssetPath = assetPath;
 			assetPath = assetPath.TrimStart('/');
@@ -31,7 +31,7 @@ namespace YooAsset.Editor
 			}
 
 			CollectPath = string.Empty;
-			GroupName = string.Empty;
+			GroupName = groupName;
 		}
 		public PackRuleData(string assetPath, string collectPath, string bundleName, string groupName)
 		{

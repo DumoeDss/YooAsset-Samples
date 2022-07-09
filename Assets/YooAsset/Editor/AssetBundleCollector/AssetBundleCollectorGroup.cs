@@ -6,10 +6,15 @@ using UnityEngine;
 using UnityEditor;
 
 namespace YooAsset.Editor
-{
+{	
 	[Serializable]
 	public class AssetBundleCollectorGroup
 	{
+		/// <summary>
+		/// 包名称
+		/// </summary>
+		public string PackageName = string.Empty;
+
 		/// <summary>
 		/// 分组名称
 		/// </summary>
@@ -26,9 +31,9 @@ namespace YooAsset.Editor
 		public string AssetTags = string.Empty;
 
 		/// <summary>
-		/// 分组激活规则
+		/// 打包规则类名
 		/// </summary>
-		public string ActiveRuleName = nameof(EnableGroup);
+		public string PackRuleName = nameof(PackGroup);
 
 		/// <summary>
 		/// 分组的收集器列表
@@ -41,8 +46,9 @@ namespace YooAsset.Editor
 		/// </summary>
 		public void CheckConfigError()
 		{
-			if (AssetBundleCollectorSettingData.HasActiveRuleName(ActiveRuleName) == false)
-				throw new Exception($"Invalid {nameof(IActiveRule)} class type : {ActiveRuleName} in group : {GroupName}");
+
+			if (AssetBundleCollectorSettingData.HasPackRuleName(PackRuleName) == false)
+				throw new Exception($"Invalid {nameof(IPackRule)} class type : {PackRuleName} in collector : {GroupName}");
 
 			foreach (var collector in Collectors)
 			{
@@ -56,13 +62,6 @@ namespace YooAsset.Editor
 		public List<CollectAssetInfo> GetAllCollectAssets(EBuildMode buildMode)
 		{
 			Dictionary<string, CollectAssetInfo> result = new Dictionary<string, CollectAssetInfo>(10000);
-
-			// 检测分组是否激活
-			IActiveRule activeRule = AssetBundleCollectorSettingData.GetActiveRuleInstance(ActiveRuleName);
-			if (activeRule.IsActiveGroup() == false)
-			{
-				return new List<CollectAssetInfo>();
-			}
 
 			// 收集打包资源
 			foreach (var collector in Collectors)
@@ -78,19 +77,16 @@ namespace YooAsset.Editor
 			}
 
 			// 检测可寻址地址是否重复
-			if (AssetBundleCollectorSettingData.Setting.EnableAddressable)
+			HashSet<string> adressTemper = new HashSet<string>();
+			foreach (var collectInfoPair in result)
 			{
-				HashSet<string> adressTemper = new HashSet<string>();
-				foreach (var collectInfoPair in result)
+				if (collectInfoPair.Value.CollectorType == ECollectorType.MainAssetCollector)
 				{
-					if (collectInfoPair.Value.CollectorType == ECollectorType.MainAssetCollector)
-					{
-						string address = collectInfoPair.Value.Address;
-						if (adressTemper.Contains(address) == false)
-							adressTemper.Add(address);
-						else
-							throw new Exception($"The address is existed : {address} in group : {GroupName}");
-					}
+					string address = collectInfoPair.Value.Address;
+					if (adressTemper.Contains(address) == false)
+						adressTemper.Add(address);
+					else
+						throw new Exception($"The address is existed : {address} in group : {GroupName}");
 				}
 			}
 

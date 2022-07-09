@@ -42,11 +42,6 @@ namespace YooAsset.Editor
 		public bool VerifyBuildingResult = false;
 
 		/// <summary>
-		/// 启用可寻址资源定位
-		/// </summary>
-		public bool EnableAddressable = false;
-
-		/// <summary>
 		/// 追加文件扩展名
 		/// </summary>
 		public bool AppendFileExtension = false;

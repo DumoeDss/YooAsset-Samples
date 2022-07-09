@@ -40,7 +40,6 @@ namespace YooAsset.Editor
 				buildReport.Summary.BuildMode = buildParameters.Parameters.BuildMode;
 				buildReport.Summary.BuildVersion = buildParameters.Parameters.BuildVersion;
 				buildReport.Summary.BuildinTags = buildParameters.Parameters.BuildinTags;
-				buildReport.Summary.EnableAddressable = buildParameters.Parameters.EnableAddressable;
 				buildReport.Summary.AppendFileExtension = buildParameters.Parameters.AppendFileExtension;
 				buildReport.Summary.CopyBuildinTagFiles = buildParameters.Parameters.CopyBuildinTagFiles;
 				buildReport.Summary.AutoCollectShaders = AssetBundleCollectorSettingData.Setting.AutoCollectShaders;

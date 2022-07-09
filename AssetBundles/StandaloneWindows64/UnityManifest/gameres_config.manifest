@@ -1,0 +1,20 @@
+ManifestFileVersion: 0
+CRC: 3924652673
+Hashes:
+  AssetFileHash:
+    serializedVersion: 2
+    Hash: 7006246dca34d6888693f08e6b129556
+  TypeTreeHash:
+    serializedVersion: 2
+    Hash: 5ad585dd02dfb5016c0dad519eab8f49
+HashAppended: 0
+ClassTypes:
+- Class: 49
+  Script: {instanceID: 0}
+SerializeReferenceClassIdentifiers: []
+Assets:
+- Assets/Samples/GameRes/Config/config2.txt
+- Assets/Samples/GameRes/Config/config3.txt
+- Assets/Samples/GameRes/Config/config1.txt
+- Assets/Samples/GameRes/Config/config4.txt
+Dependencies: []

@@ -17,4 +17,4 @@ MonoBehaviour:
   BuildTags: 
   CompressOption: 2
   EncyptionClassName: EncryptionNone
-  AppendExtension: 0
+  AppendExtension: 1

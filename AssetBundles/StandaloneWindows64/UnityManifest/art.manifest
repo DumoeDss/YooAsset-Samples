@@ -1,0 +1,52 @@
+ManifestFileVersion: 0
+CRC: 1560704494
+Hashes:
+  AssetFileHash:
+    serializedVersion: 2
+    Hash: 04745ace5cad624fc6fbaea63281310b
+  TypeTreeHash:
+    serializedVersion: 2
+    Hash: a849e5aafebda7fbf6350800befba8dc
+HashAppended: 0
+ClassTypes:
+- Class: 21
+  Script: {instanceID: 0}
+- Class: 28
+  Script: {instanceID: 0}
+- Class: 48
+  Script: {instanceID: 0}
+- Class: 49
+  Script: {instanceID: 0}
+- Class: 128
+  Script: {instanceID: 0}
+- Class: 200
+  Script: {instanceID: 0}
+SerializeReferenceClassIdentifiers: []
+Assets:
+- Assets/Samples/GameArt/Entity/Gometry/PacMan/Tex.jpeg
+- Assets/Samples/GameArt/UIFont/Roboto/Roboto-ThinItalic.ttf
+- Assets/Samples/GameArt/Entity/Gometry/Sphere/SphereMat3.mat
+- Assets/Samples/GameArt/ShaderVariants/MyShaderVariants.shadervariants
+- Assets/Samples/GameArt/UIFont/Roboto/Roboto-Italic.ttf
+- Assets/Samples/GameArt/Entity/Gometry/Tex/Tex3.jpg
+- Assets/Samples/GameArt/Entity/Gometry/Cube/CubeMat1.mat
+- Assets/Samples/GameArt/Entity/Gometry/Tex/Tex1.jpg
+- Assets/Samples/GameArt/Entity/Gometry/Cube/CubeMat2.mat
+- Assets/Samples/GameArt/UIFont/Roboto/Roboto-BlackItalic.ttf
+- Assets/Samples/GameArt/Entity/Gometry/Sphere/SphereMat1.mat
+- Assets/Samples/GameArt/UIFont/Roboto/Roboto-Black.ttf
+- Assets/Samples/GameArt/UIFont/Roboto/Roboto-Thin.ttf
+- Assets/Samples/GameArt/UIFont/Roboto/Roboto-LightItalic.ttf
+- Assets/Samples/GameArt/Entity/Gometry/Sphere/SphereMat2.mat
+- Assets/Samples/GameArt/Entity/Gometry/Tex/Tex2.jpg
+- Assets/Samples/GameArt/UIFont/Roboto/Roboto-MediumItalic.ttf
+- Assets/Samples/GameArt/UIFont/Roboto/Roboto-BoldItalic.ttf
+- Assets/Samples/GameArt/UIFont/Roboto/Roboto-Regular.ttf
+- Assets/Samples/GameArt/Entity/Gometry/PacMan/Mat.mat
+- Assets/Samples/GameArt/ShaderVariants/MyShaderVariants.json
+- Assets/Samples/GameArt/UIFont/Roboto/Roboto-Medium.ttf
+- Assets/Samples/GameArt/UIFont/Roboto/Roboto-Bold.ttf
+- Assets/Samples/GameArt/UIFont/Roboto/Roboto-Light.ttf
+- Assets/Samples/GameArt/Entity/Gometry/Cube/CubeMat3.mat
+Dependencies:
+- E:/Projects/Hotfix/YooAsset-Samples/Bundles/StandaloneWindows64/UnityManifest/myshaders

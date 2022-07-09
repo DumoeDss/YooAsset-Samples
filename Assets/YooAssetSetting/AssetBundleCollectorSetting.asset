@@ -12,132 +12,146 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 185f6993d5150494d98da50e26cb1c25, type: 3}
   m_Name: AssetBundleCollectorSetting
   m_EditorClassIdentifier: 
-  EnableAddressable: 0
   AutoCollectShaders: 1
   ShadersBundleName: myshaders
-  Groups:
-  - GroupName: Level
-    GroupDesc: "\u5173\u5361\u8D44\u6E90"
-    AssetTags: level
-    ActiveRuleName: EnableGroup
-    Collectors:
-    - CollectPath: Assets/Samples/GameRes/Entity/Level1/footman_Blue.prefab
-      BundleName: footman_Green
-      CollectorType: 0
-      AddressRuleName: AddressByFileName
-      PackRuleName: PackSeparately
-      FilterRuleName: CollectPrefab
-      AssetTags: level1
-    - CollectPath: Assets/Samples/GameRes/Entity/Level2/footman_Green.prefab
-      BundleName: footman_Green
-      CollectorType: 0
-      AddressRuleName: AddressByFileName
-      PackRuleName: PackSeparately
-      FilterRuleName: CollectPrefab
-      AssetTags: level2
-    - CollectPath: Assets/Samples/GameRes/Entity/Level3
-      BundleName: Level3
-      CollectorType: 0
-      AddressRuleName: AddressByFileName
-      PackRuleName: PackDirectory
-      FilterRuleName: CollectPrefab
-      AssetTags: level3
-    - CollectPath: Assets/Samples/GameRes/Entity/Cube
-      BundleName: Cube
-      CollectorType: 0
-      AddressRuleName: AddressByFileName
-      PackRuleName: PackSeparately
-      FilterRuleName: CollectPrefab
-      AssetTags: cube
-    - CollectPath: Assets/Samples/GameRes/Entity/Sphere
-      BundleName: Sphere
-      CollectorType: 0
-      AddressRuleName: AddressByFileName
-      PackRuleName: PackDirectory
-      FilterRuleName: CollectAll
-      AssetTags: sphere
-  - GroupName: Buildin
-    GroupDesc: "\u5185\u7F6E\u8D44\u6E90"
-    AssetTags: buildin
-    ActiveRuleName: EnableGroup
-    Collectors:
-    - CollectPath: Assets/Samples/GameRes/Scene
-      BundleName: Scene
-      CollectorType: 0
-      AddressRuleName: AddressByFileName
-      PackRuleName: PackSeparately
-      FilterRuleName: CollectScene
+  Packages:
+  - PackageName: Art
+    PackageDesc: "\u7F8E\u672F\u8D44\u6E90"
+    IncludeInBuild: 1
+    Groups:
+    - GroupName: Level
+      GroupDesc: "\u5173\u5361\u8D44\u6E90"
+      AssetTags: level
+      PackRuleName: PackGroup
+      Collectors:
+      - CollectPath: Assets/Samples/GameRes/Entity/Level1/footman_Blue.prefab
+        Address: footman_Blue.prefab
+        CollectorType: 0
+        PackRuleName: PackGroup
+        AddressRuleName: AddressByFileName
+        FilterRuleName: CollectPrefab
+        AssetTags: level1
+      - CollectPath: Assets/Samples/GameRes/Entity/Level2/footman_Green.prefab
+        Address: footman_Green.prefab
+        CollectorType: 0
+        PackRuleName: PackGroup
+        AddressRuleName: AddressByFileName
+        FilterRuleName: CollectPrefab
+        AssetTags: level2
+      - CollectPath: Assets/Samples/GameRes/Entity/Level3
+        Address: level3
+        CollectorType: 0
+        PackRuleName: PackGroup
+        AddressRuleName: AddressByFileName
+        FilterRuleName: CollectPrefab
+        AssetTags: level3
+      - CollectPath: Assets/Samples/GameRes/Entity/Cube
+        Address: cube
+        CollectorType: 0
+        PackRuleName: PackGroup
+        AddressRuleName: AddressByFileName
+        FilterRuleName: CollectPrefab
+        AssetTags: cube
+      - CollectPath: Assets/Samples/GameRes/Entity/Sphere
+        Address: sphere
+        CollectorType: 0
+        PackRuleName: PackGroup
+        AddressRuleName: AddressByFileName
+        FilterRuleName: CollectAll
+        AssetTags: sphere
+    - GroupName: Buildin
+      GroupDesc: "\u5185\u7F6E\u8D44\u6E90"
+      AssetTags: buildin
+      PackRuleName: PackGroup
+      Collectors:
+      - CollectPath: Assets/Samples/GameRes/Scene
+        Address: scene
+        CollectorType: 0
+        PackRuleName: PackGroup
+        AddressRuleName: AddressByFileName
+        FilterRuleName: CollectScene
+        AssetTags: 
+      - CollectPath: Assets/Samples/GameRes/Config
+        Address: config
+        CollectorType: 0
+        PackRuleName: PackGroup
+        AddressRuleName: AddressByFileName
+        FilterRuleName: CollectAll
+        AssetTags: 
+      - CollectPath: Assets/Samples/GameRes/Shaders
+        Address: shaders
+        CollectorType: 0
+        PackRuleName: PackGroup
+        AddressRuleName: AddressByFileName
+        FilterRuleName: CollectAll
+        AssetTags: 
+      - CollectPath: Assets/Samples/GameRes/Music
+        Address: music
+        CollectorType: 0
+        PackRuleName: PackGroup
+        AddressRuleName: AddressByFileName
+        FilterRuleName: CollectAll
+        AssetTags: 
+    - GroupName: Other
+      GroupDesc: "\u5176\u5B83\u8D44\u6E90"
+      AssetTags: other
+      PackRuleName: PackGroup
+      Collectors:
+      - CollectPath: Assets/Samples/GameRes/Texture
+        Address: 
+        CollectorType: 0
+        PackRuleName: PackGroup
+        AddressRuleName: AddressByFileName
+        FilterRuleName: CollectAll
+        AssetTags: 
+      - CollectPath: Assets/Samples/GameRes/TpAtlas
+        Address: 
+        CollectorType: 0
+        PackRuleName: PackGroup
+        AddressRuleName: AddressByFileName
+        FilterRuleName: CollectAll
+        AssetTags: 
+      - CollectPath: Assets/Samples/GameRes/UIPanel
+        Address: 
+        CollectorType: 0
+        PackRuleName: PackGroup
+        AddressRuleName: AddressByFileName
+        FilterRuleName: CollectAll
+        AssetTags: 
+      - CollectPath: Assets/Samples/GameRes/UISprite
+        Address: 
+        CollectorType: 0
+        PackRuleName: PackGroup
+        AddressRuleName: AddressByFileName
+        FilterRuleName: CollectAll
+        AssetTags: 
+    - GroupName: Art
+      GroupDesc: "\u7F8E\u672F\u8D44\u6E90"
       AssetTags: 
-    - CollectPath: Assets/Samples/GameRes/Config
-      BundleName: Config
-      CollectorType: 0
-      AddressRuleName: AddressByFileName
-      PackRuleName: PackRawFile
-      FilterRuleName: CollectAll
-      AssetTags: 
-    - CollectPath: Assets/Samples/GameRes/Shaders
-      BundleName: Shaders
-      CollectorType: 0
-      AddressRuleName: AddressByFileName
-      PackRuleName: PackDirectory
-      FilterRuleName: CollectAll
-      AssetTags: 
-  - GroupName: Other
-    GroupDesc: "\u5176\u5B83\u8D44\u6E90"
-    AssetTags: other
-    ActiveRuleName: EnableGroup
-    Collectors:
-    - CollectPath: Assets/Samples/GameRes/Music
-      BundleName: Music
-      CollectorType: 0
-      AddressRuleName: AddressByGroupAndFileName
-      PackRuleName: PackCollector
-      FilterRuleName: CollectAll
-      AssetTags: 
-    - CollectPath: Assets/Samples/GameRes/Texture
-      BundleName: Texture
-      CollectorType: 0
-      AddressRuleName: AddressByGroupAndFileName
-      PackRuleName: PackCollector
-      FilterRuleName: CollectAll
-      AssetTags: 
-    - CollectPath: Assets/Samples/GameRes/UIAtlas
-      BundleName: UIAtlas
-      CollectorType: 0
-      AddressRuleName: AddressByFileName
-      PackRuleName: PackTopDirectory
-      FilterRuleName: CollectAll
-      AssetTags: 
-  - GroupName: Art
-    GroupDesc: "\u7F8E\u672F\u8D44\u6E90"
-    AssetTags: 
-    ActiveRuleName: EnableGroup
-    Collectors:
-    - CollectPath: Assets/Samples/GameArt/UISprite/UIIcons
-      BundleName: UIIcons
-      CollectorType: 1
-      AddressRuleName: AddressByFileName
-      PackRuleName: PackDirectory
-      FilterRuleName: CollectSprite
-      AssetTags: 
-    - CollectPath: Assets/Samples/GameArt/ShaderVariants
-      BundleName: ShaderVariants
-      CollectorType: 1
-      AddressRuleName: AddressByFileName
-      PackRuleName: PackShaderVariants
-      FilterRuleName: CollectAll
-      AssetTags: 
-    - CollectPath: Assets/Samples/GameArt/Entity/Gometry
-      BundleName: Gometry
-      CollectorType: 2
-      AddressRuleName: AddressByFileName
-      PackRuleName: PackDirectory
-      FilterRuleName: CollectAll
-      AssetTags: 
-    - CollectPath: Assets/Samples/GameArt/UIFont
-      BundleName: UIFont
-      CollectorType: 2
-      AddressRuleName: AddressByFileName
-      PackRuleName: PackDirectory
-      FilterRuleName: CollectAll
-      AssetTags: 
+      PackRuleName: PackGroup
+      Collectors:
+      - CollectPath: Assets/Samples/GameArt/ShaderVariants
+        Address: ShaderVariants
+        CollectorType: 0
+        PackRuleName: PackGroup
+        AddressRuleName: AddressByFileName
+        FilterRuleName: CollectAll
+        AssetTags: 
+      - CollectPath: Assets/Samples/GameArt/Entity/Gometry
+        Address: 
+        CollectorType: 2
+        PackRuleName: PackGroup
+        AddressRuleName: AddressByFileName
+        FilterRuleName: CollectAll
+        AssetTags: 
+      - CollectPath: Assets/Samples/GameArt/UIFont
+        Address: 
+        CollectorType: 2
+        PackRuleName: PackGroup
+        AddressRuleName: AddressByFileName
+        FilterRuleName: CollectAll
+        AssetTags: 
+  - PackageName: Default Package
+    PackageDesc: 
+    IncludeInBuild: 0
+    Groups: []

@@ -13,11 +13,6 @@ namespace YooAsset
 	internal class PatchManifest
 	{
 		/// <summary>
-		/// 启用可寻址资源定位
-		/// </summary>
-		public bool EnableAddressable;
-
-		/// <summary>
 		/// 资源版本号
 		/// </summary>
 		public int ResourceVersion;
@@ -26,6 +21,10 @@ namespace YooAsset
 		/// 内置资源的标签列表（首包资源）
 		/// </summary>
 		public string BuildinTags;
+
+		public string PackageID;
+
+		public List<string> DependIDs;
 
 		/// <summary>
 		/// 资源列表（主动收集的资源列表）
@@ -70,45 +69,16 @@ namespace YooAsset
 				return;
 			_isInitAssetPathMapping = true;
 
-			if (EnableAddressable)
+			if (locationToLower)
+				YooLogger.Error("Addressable not support location to lower !");
+
+			foreach (var patchAsset in AssetList)
 			{
-				if (locationToLower)
-					YooLogger.Error("Addressable not support location to lower !");
-
-				foreach (var patchAsset in AssetList)
-				{
-					string location = patchAsset.Address;
-					if (AssetPathMapping.ContainsKey(location))
-						throw new Exception($"Address have existed : {location}");
-					else
-						AssetPathMapping.Add(location, patchAsset.AssetPath);
-				}
-			}
-			else
-			{
-				_locationToLower = locationToLower;
-				foreach (var patchAsset in AssetList)
-				{
-					string location = patchAsset.AssetPath;
-					if (locationToLower)
-						location = location.ToLower();
-
-					// 添加原生路径的映射
-					if (AssetPathMapping.ContainsKey(location))
-						throw new Exception($"AssetPath have existed : {location}");
-					else
-						AssetPathMapping.Add(location, patchAsset.AssetPath);
-
-					// 添加无后缀名路径的映射
-					if (Path.HasExtension(location))
-					{
-						string locationWithoutExtension = StringUtility.RemoveExtension(location);
-						if (AssetPathMapping.ContainsKey(locationWithoutExtension))
-							YooLogger.Warning($"AssetPath have existed : {locationWithoutExtension}");
-						else
-							AssetPathMapping.Add(locationWithoutExtension, patchAsset.AssetPath);
-					}
-				}
+				string location = patchAsset.Address;
+				if (AssetPathMapping.ContainsKey(location))
+					throw new Exception($"Address have existed : {location}");
+				else
+					AssetPathMapping.Add(location, patchAsset.AssetPath);
 			}
 		}
 

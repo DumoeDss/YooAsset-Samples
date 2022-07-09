@@ -53,9 +53,10 @@ namespace YooAsset.Editor
 		/// </summary>
 		public List<BuildAssetInfo> AllDependAssetInfos { private set; get; }
 
-
+		//string packageName, 
 		public BuildAssetInfo(ECollectorType collectorType, string mainBundleName, string address, string assetPath, bool isRawAsset)
 		{
+
 			_mainBundleName = mainBundleName;
 			CollectorType = collectorType;
 			Address = address;
@@ -71,7 +72,7 @@ namespace YooAsset.Editor
 		public BuildAssetInfo(string assetPath)
 		{
 			CollectorType = ECollectorType.None;
-			Address = string.Empty;
+			Address = "ShaderAsset";
 			AssetPath = assetPath;
 			IsRawAsset = false;
 
@@ -183,13 +184,20 @@ namespace YooAsset.Editor
 					}
 				}
 
-				if (_referenceBundleNames.Count > 1)
-				{
-					IPackRule packRule = PackDirectory.StaticPackRule;
-					var bundleName = packRule.GetBundleName(new PackRuleData(AssetPath));
-					var shareBundleName = $"share_{bundleName}";//.{YooAssetSettingsData.Setting.AssetBundleFileVariant}
+				if(_referenceBundleNames.Count == 1)
+                {
+					IPackRule packRule = PackGroup.StaticPackRule;
+					var bundleName = packRule.GetBundleName(new PackRuleData(AssetPath,"AutoDependencies"));
+					var shareBundleName = $"share_{bundleName}";
 					_shareBundleName = EditorTools.GetRegularPath(shareBundleName).ToLower();
 				}
+				else if (_referenceBundleNames.Count > 1)
+				{
+                    IPackRule packRule = PackGroup.StaticPackRule;
+                    var bundleName = packRule.GetBundleName(new PackRuleData(AssetPath, "SharedAutoDependencies"));
+                    var shareBundleName = $"share_{bundleName}";
+                    _shareBundleName = EditorTools.GetRegularPath(shareBundleName).ToLower();
+                }
 			}
 			else
 			{

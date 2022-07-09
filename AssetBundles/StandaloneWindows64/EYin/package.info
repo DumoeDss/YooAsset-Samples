@@ -1,0 +1,22 @@
+{
+    "_name": "Example Mod",
+    "_author": "",
+    "_description": "",
+    "_version": "",
+    "_unityVersion": "2021.3.5f1",
+    "_platforms": 1,
+    "_content": 5,
+    "_fullScene": true,
+    "_sceneName": "AncientStyle.unity",
+    "_assemblyName": "HotUpdateScripts.bytes",
+    "_managerClassName": "",
+    "_sceneObjs": [],
+    "_dependencies": [{
+            "_name": "",
+            "_version": ""
+        }, {
+            "_name": "",
+            "_version": ""
+        }
+    ]
+}

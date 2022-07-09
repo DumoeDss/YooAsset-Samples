@@ -17,12 +17,19 @@ namespace YooAsset.Editor
 		public const string XmlEnableAddressable = "AutoAddressable";
 		public const string XmlAutoCollectShader = "AutoCollectShader";
 		public const string XmlShaderBundleName = "ShaderBundleName";
+
+		public const string XmlPackage = "Package";
+		public const string XmlPackageName = "PackageName";
+		public const string XmlPackageDesc = "PackageDesc";
+
 		public const string XmlGroup = "Group";
 		public const string XmlGroupName = "GroupName";
 		public const string XmlGroupDesc = "GroupDesc";
+
 		public const string XmlCollector = "Collector";
 		public const string XmlCollectPath = "CollectPath";
 		public const string XmlCollectorType = "CollectType";
+
 		public const string XmlAddressRule = "AddressRule";
 		public const string XmlPackRule = "PackRule";
 		public const string XmlFilterRule = "FilterRule";
@@ -71,60 +78,80 @@ namespace YooAsset.Editor
 				shaderBundleName = commonElement.GetAttribute(XmlShaderBundleName);
 			}
 
-			// 读取分组配置
-			List<AssetBundleCollectorGroup> groupTemper = new List<AssetBundleCollectorGroup>();
-			var groupNodeList = root.GetElementsByTagName(XmlGroup);
-			foreach (var groupNode in groupNodeList)
-			{
-				XmlElement groupElement = groupNode as XmlElement;
-				if (groupElement.HasAttribute(XmlGroupName) == false)
-					throw new Exception($"Not found attribute {XmlGroupName} in {XmlGroup}");
-				if (groupElement.HasAttribute(XmlGroupDesc) == false)
-					throw new Exception($"Not found attribute {XmlGroupDesc} in {XmlGroup}");
-				if (groupElement.HasAttribute(XmlAssetTags) == false)
-					throw new Exception($"Not found attribute {XmlAssetTags} in {XmlGroup}");
+			List<AssetBundleCollectorPackage> packageTemper = new List<AssetBundleCollectorPackage>();
+			var packageNodeList = root.GetElementsByTagName(XmlPackage);
 
-				AssetBundleCollectorGroup group = new AssetBundleCollectorGroup();
-				group.GroupName = groupElement.GetAttribute(XmlGroupName);
-				group.GroupDesc = groupElement.GetAttribute(XmlGroupDesc);
-				group.AssetTags = groupElement.GetAttribute(XmlAssetTags);
-				groupTemper.Add(group);
+			foreach (var packageNode in packageNodeList)
+            {
+				XmlElement packageElement = packageNode as XmlElement;
+				if (packageElement.HasAttribute(XmlPackageName) == false)
+					throw new Exception($"Not found attribute {XmlPackageName} in {XmlPackage}");
+				if (packageElement.HasAttribute(XmlPackageDesc) == false)
+					throw new Exception($"Not found attribute {XmlPackageDesc} in {XmlPackage}");
+				
+				AssetBundleCollectorPackage package = new AssetBundleCollectorPackage();
+				package.PackageName = packageElement.GetAttribute(XmlPackageName);
+				package.PackageDesc = packageElement.GetAttribute(XmlPackageDesc);
+				packageTemper.Add(package);
+				var groupNodeList = packageElement.GetElementsByTagName(XmlGroup);
 
-				// 读取收集器配置
-				var collectorNodeList = groupElement.GetElementsByTagName(XmlCollector);
-				foreach (var collectorNode in collectorNodeList)
+				// 读取分组配置
+				List<AssetBundleCollectorGroup> groupTemper = new List<AssetBundleCollectorGroup>();
+				package.Groups = groupTemper;
+
+				foreach (var groupNode in groupNodeList)
 				{
-					XmlElement collectorElement = collectorNode as XmlElement;
-					if (collectorElement.HasAttribute(XmlCollectPath) == false)
-						throw new Exception($"Not found attribute {XmlCollectPath} in {XmlCollector}");
-					if (collectorElement.HasAttribute(XmlCollectorType) == false)
-						throw new Exception($"Not found attribute {XmlCollectorType} in {XmlCollector}");
-					if (collectorElement.HasAttribute(XmlAddressRule) == false)
-						throw new Exception($"Not found attribute {XmlAddressRule} in {XmlCollector}");
-					if (collectorElement.HasAttribute(XmlPackRule) == false)
-						throw new Exception($"Not found attribute {XmlPackRule} in {XmlCollector}");
-					if (collectorElement.HasAttribute(XmlFilterRule) == false)
-						throw new Exception($"Not found attribute {XmlFilterRule} in {XmlCollector}");
-					if (collectorElement.HasAttribute(XmlAssetTags) == false)
-						throw new Exception($"Not found attribute {XmlAssetTags} in {XmlCollector}");
+					XmlElement groupElement = groupNode as XmlElement;
+					if (groupElement.HasAttribute(XmlGroupName) == false)
+						throw new Exception($"Not found attribute {XmlGroupName} in {XmlGroup}");
+					if (groupElement.HasAttribute(XmlGroupDesc) == false)
+						throw new Exception($"Not found attribute {XmlGroupDesc} in {XmlGroup}");
+					if (groupElement.HasAttribute(XmlAssetTags) == false)
+						throw new Exception($"Not found attribute {XmlAssetTags} in {XmlGroup}");
 
-					AssetBundleCollector collector = new AssetBundleCollector();
-					collector.CollectPath = collectorElement.GetAttribute(XmlCollectPath);
-					collector.CollectorType = StringUtility.NameToEnum<ECollectorType>(collectorElement.GetAttribute(XmlCollectorType));
-					collector.AddressRuleName = collectorElement.GetAttribute(XmlAddressRule);
-					collector.PackRuleName = collectorElement.GetAttribute(XmlPackRule);
-					collector.FilterRuleName = collectorElement.GetAttribute(XmlFilterRule);
-					collector.AssetTags = collectorElement.GetAttribute(XmlAssetTags); ;
-					group.Collectors.Add(collector);
+					AssetBundleCollectorGroup group = new AssetBundleCollectorGroup();
+					group.GroupName = groupElement.GetAttribute(XmlGroupName);
+					group.GroupDesc = groupElement.GetAttribute(XmlGroupDesc);
+					group.AssetTags = groupElement.GetAttribute(XmlAssetTags);
+					groupTemper.Add(group);
+
+					// 读取收集器配置
+					var collectorNodeList = groupElement.GetElementsByTagName(XmlCollector);
+					foreach (var collectorNode in collectorNodeList)
+					{
+						XmlElement collectorElement = collectorNode as XmlElement;
+						if (collectorElement.HasAttribute(XmlCollectPath) == false)
+							throw new Exception($"Not found attribute {XmlCollectPath} in {XmlCollector}");
+						if (collectorElement.HasAttribute(XmlCollectorType) == false)
+							throw new Exception($"Not found attribute {XmlCollectorType} in {XmlCollector}");
+						if (collectorElement.HasAttribute(XmlAddressRule) == false)
+							throw new Exception($"Not found attribute {XmlAddressRule} in {XmlCollector}");
+						if (collectorElement.HasAttribute(XmlPackRule) == false)
+							throw new Exception($"Not found attribute {XmlPackRule} in {XmlCollector}");
+						if (collectorElement.HasAttribute(XmlFilterRule) == false)
+							throw new Exception($"Not found attribute {XmlFilterRule} in {XmlCollector}");
+						if (collectorElement.HasAttribute(XmlAssetTags) == false)
+							throw new Exception($"Not found attribute {XmlAssetTags} in {XmlCollector}");
+
+						AssetBundleCollector collector = new AssetBundleCollector();
+						collector.CollectPath = collectorElement.GetAttribute(XmlCollectPath);
+						collector.CollectorType = StringUtility.NameToEnum<ECollectorType>(collectorElement.GetAttribute(XmlCollectorType));
+						collector.AddressRuleName = collectorElement.GetAttribute(XmlAddressRule);
+						collector.PackRuleName = collectorElement.GetAttribute(XmlPackRule);
+						collector.FilterRuleName = collectorElement.GetAttribute(XmlFilterRule);
+						collector.AssetTags = collectorElement.GetAttribute(XmlAssetTags); ;
+						group.Collectors.Add(collector);
+					}
 				}
+
 			}
+
 
 			// 保存配置数据
 			AssetBundleCollectorSettingData.ClearAll();
-			AssetBundleCollectorSettingData.Setting.EnableAddressable = enableAddressable;
 			AssetBundleCollectorSettingData.Setting.AutoCollectShaders = autoCollectShaders;
 			AssetBundleCollectorSettingData.Setting.ShadersBundleName = shaderBundleName;
-			AssetBundleCollectorSettingData.Setting.Groups.AddRange(groupTemper);
+			AssetBundleCollectorSettingData.Setting.Packages.AddRange(packageTemper);
 			AssetBundleCollectorSettingData.SaveFile();
 			Debug.Log($"导入配置完毕！");
 		}
@@ -151,33 +178,41 @@ namespace YooAsset.Editor
 
 			// 设置公共配置
 			var commonElement = xmlDoc.CreateElement(XmlCommon);
-			commonElement.SetAttribute(XmlEnableAddressable, AssetBundleCollectorSettingData.Setting.EnableAddressable.ToString());
 			commonElement.SetAttribute(XmlAutoCollectShader, AssetBundleCollectorSettingData.Setting.AutoCollectShaders.ToString());
 			commonElement.SetAttribute(XmlShaderBundleName, AssetBundleCollectorSettingData.Setting.ShadersBundleName);
 			root.AppendChild(commonElement);
 
-			// 设置分组配置
-			foreach (var group in AssetBundleCollectorSettingData.Setting.Groups)
-			{
-				var groupElement = xmlDoc.CreateElement(XmlGroup);
-				groupElement.SetAttribute(XmlGroupName, group.GroupName);
-				groupElement.SetAttribute(XmlGroupDesc, group.GroupDesc);
-				groupElement.SetAttribute(XmlAssetTags, group.AssetTags);
-				root.AppendChild(groupElement);
+            // 设置分组配置
+            foreach (var package in AssetBundleCollectorSettingData.Setting.Packages)
+            {
+				var packageElement = xmlDoc.CreateElement(XmlPackage);
+				packageElement.SetAttribute(XmlGroupName, package.PackageName);
+				packageElement.SetAttribute(XmlGroupDesc, package.PackageDesc);
+				root.AppendChild(packageElement);
 
-				// 设置收集器配置
-				foreach (var collector in group.Collectors)
+				foreach (var group in package.Groups)
 				{
-					var collectorElement = xmlDoc.CreateElement(XmlCollector);
-					collectorElement.SetAttribute(XmlCollectPath, collector.CollectPath);
-					collectorElement.SetAttribute(XmlCollectorType, collector.CollectorType.ToString());
-					collectorElement.SetAttribute(XmlAddressRule, collector.AddressRuleName);
-					collectorElement.SetAttribute(XmlPackRule, collector.PackRuleName);
-					collectorElement.SetAttribute(XmlFilterRule, collector.FilterRuleName);
-					collectorElement.SetAttribute(XmlAssetTags, collector.AssetTags);
-					groupElement.AppendChild(collectorElement);
+					var groupElement = xmlDoc.CreateElement(XmlGroup);
+					groupElement.SetAttribute(XmlGroupName, group.GroupName);
+					groupElement.SetAttribute(XmlGroupDesc, group.GroupDesc);
+					groupElement.SetAttribute(XmlAssetTags, group.AssetTags);
+					packageElement.AppendChild(groupElement);
+
+					// 设置收集器配置
+					foreach (var collector in group.Collectors)
+					{
+						var collectorElement = xmlDoc.CreateElement(XmlCollector);
+						collectorElement.SetAttribute(XmlCollectPath, collector.CollectPath);
+						collectorElement.SetAttribute(XmlCollectorType, collector.CollectorType.ToString());
+						collectorElement.SetAttribute(XmlAddressRule, collector.AddressRuleName);
+						collectorElement.SetAttribute(XmlPackRule, collector.PackRuleName);
+						collectorElement.SetAttribute(XmlFilterRule, collector.FilterRuleName);
+						collectorElement.SetAttribute(XmlAssetTags, collector.AssetTags);
+						groupElement.AppendChild(collectorElement);
+					}
 				}
 			}
+			
 
 			// 生成配置文件
 			xmlDoc.Save(savePath);

@@ -14,7 +14,7 @@ namespace YooAsset.Editor
 		/// </summary>
 		public string CollectPath = string.Empty;
 
-		public string BundleName = string.Empty;
+		public string Address = string.Empty;
 
 		/// <summary>
 		/// 收集器类型
@@ -22,14 +22,14 @@ namespace YooAsset.Editor
 		public ECollectorType CollectorType = ECollectorType.MainAssetCollector;
 
 		/// <summary>
-		/// 寻址规则类名
-		/// </summary>
-		public string AddressRuleName = nameof(AddressByFileName);
-
-		/// <summary>
 		/// 打包规则类名
 		/// </summary>
-		public string PackRuleName = nameof(PackDirectory);
+		public string PackRuleName = nameof(PackGroup);
+
+		/// <summary>
+		/// 寻址规则类名
+		/// </summary>
+		public string AddressRuleName = nameof(AddressByGroupAndFileName);
 
 		/// <summary>
 		/// 过滤规则类名
@@ -50,14 +50,17 @@ namespace YooAsset.Editor
 			if (AssetDatabase.LoadAssetAtPath<UnityEngine.Object>(CollectPath) == null)
 				return false;
 
-			if (CollectorType == ECollectorType.None)
+            if (string.IsNullOrEmpty(Address))
+            {
+				UnityEngine.Debug.LogError(CollectPath + " 的Address 为空，请检查! ");
 				return false;
+			}
 
-			if (AssetBundleCollectorSettingData.HasAddressRuleName(AddressRuleName) == false)
-				return false;
+			//if (CollectorType == ECollectorType.None)
+			//	return false;
 
-			if (AssetBundleCollectorSettingData.HasPackRuleName(PackRuleName) == false)
-				return false;
+			//if (AssetBundleCollectorSettingData.HasPackRuleName(PackRuleName) == false)
+			//	return false;
 
 			if (AssetBundleCollectorSettingData.HasFilterRuleName(FilterRuleName) == false)
 				return false;
@@ -73,17 +76,8 @@ namespace YooAsset.Editor
 			if (AssetDatabase.LoadAssetAtPath<UnityEngine.Object>(CollectPath) == null)
 				throw new Exception($"Invalid collect path : {CollectPath}");
 
-			if (CollectorType == ECollectorType.None)
-				throw new Exception($"{nameof(ECollectorType)}.{ECollectorType.None} is invalid in collector : {CollectPath}");
-
-			if (AssetBundleCollectorSettingData.HasPackRuleName(PackRuleName) == false)
-				throw new Exception($"Invalid {nameof(IPackRule)} class type : {PackRuleName} in collector : {CollectPath}");
-
 			if (AssetBundleCollectorSettingData.HasFilterRuleName(FilterRuleName) == false)
 				throw new Exception($"Invalid {nameof(IFilterRule)} class type : {FilterRuleName} in collector : {CollectPath}");
-
-			if (AssetBundleCollectorSettingData.HasAddressRuleName(AddressRuleName) == false)
-				throw new Exception($"Invalid {nameof(IAddressRule)} class type : {AddressRuleName} in collector : {CollectPath}");
 		}
 
 		/// <summary>
@@ -144,19 +138,16 @@ namespace YooAsset.Editor
 			}
 
 			// 检测可寻址地址是否重复
-			if (AssetBundleCollectorSettingData.Setting.EnableAddressable)
+			HashSet<string> adressTemper = new HashSet<string>();
+			foreach (var collectInfoPair in result)
 			{
-				HashSet<string> adressTemper = new HashSet<string>();
-				foreach (var collectInfoPair in result)
+				if (collectInfoPair.Value.CollectorType == ECollectorType.MainAssetCollector)
 				{
-					if (collectInfoPair.Value.CollectorType == ECollectorType.MainAssetCollector)
-					{
-						string address = collectInfoPair.Value.Address;
-						if (adressTemper.Contains(address) == false)
-							adressTemper.Add(address);
-						else
-							throw new Exception($"The address is existed : {address} in collector : {CollectPath}");
-					}
+					string address = collectInfoPair.Value.Address;
+					if (adressTemper.Contains(address) == false)
+						adressTemper.Add(address);
+					else
+						throw new Exception($"The address is existed : {address} in collector : {CollectPath}");
 				}
 			}
 
@@ -176,7 +167,6 @@ namespace YooAsset.Editor
 				collectAssetInfo.DependAssets = new List<string>();
 			else
 				collectAssetInfo.DependAssets = GetAllDependencies(assetPath);
-
 			return collectAssetInfo;
 		}
 		private bool IsValidateAsset(string assetPath)
@@ -218,7 +208,7 @@ namespace YooAsset.Editor
 				return string.Empty;
 
 			IAddressRule addressRuleInstance = AssetBundleCollectorSettingData.GetAddressRuleInstance(AddressRuleName);
-			string adressValue = addressRuleInstance.GetAssetAddress(new AddressRuleData(assetPath, CollectPath, group.GroupName));
+			string adressValue = addressRuleInstance.GetAssetAddress(new AddressRuleData(assetPath, Address, CollectPath, group.GroupName));
 			return adressValue;
 		}
 		private string GetBundleName(AssetBundleCollectorGroup group, string assetPath)
@@ -237,7 +227,7 @@ namespace YooAsset.Editor
 			// 根据规则设置获取资源包名称
 			{
 				IPackRule packRuleInstance = AssetBundleCollectorSettingData.GetPackRuleInstance(PackRuleName);
-				string bundleName = packRuleInstance.GetBundleName(new PackRuleData(assetPath, CollectPath,BundleName, group.GroupName));
+				string bundleName = packRuleInstance.GetBundleName(new PackRuleData(assetPath, CollectPath,Address, group.GroupName));
 				return EditorTools.GetRegularPath(bundleName).ToLower();
 			}
 		}

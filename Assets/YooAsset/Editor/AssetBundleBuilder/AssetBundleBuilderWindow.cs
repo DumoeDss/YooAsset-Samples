@@ -193,7 +193,6 @@ namespace YooAsset.Editor
 			buildParameters.BuildVersion = _buildVersionField.value;
 			buildParameters.BuildinTags = _buildinTagsField.value;
 			buildParameters.VerifyBuildingResult = true;
-			buildParameters.EnableAddressable = AssetBundleCollectorSettingData.Setting.EnableAddressable;
 			buildParameters.AppendFileExtension = _appendExtensionToggle.value;
 			buildParameters.CopyBuildinTagFiles = buildMode == EBuildMode.ForceRebuild;
 			buildParameters.EncryptionServices = CreateEncryptionServicesInstance();
@@ -218,7 +217,6 @@ namespace YooAsset.Editor
 			buildParameters.BuildVersion = _buildVersionField.value;
 			buildParameters.BuildinTags = _buildinTagsField.value;
 			buildParameters.VerifyBuildingResult = true;
-			buildParameters.EnableAddressable = AssetBundleCollectorSettingData.Setting.EnableAddressable;
 			buildParameters.AppendFileExtension = _appendExtensionToggle.value;
 			buildParameters.CopyBuildinTagFiles = buildMode == EBuildMode.ForceRebuild;
 			buildParameters.EncryptionServices = CreateEncryptionServicesInstance();

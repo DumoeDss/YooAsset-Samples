@@ -9,12 +9,6 @@ namespace YooAsset.Editor
 {
 	public class AssetBundleCollectorSettingData
 	{
-		private static readonly Dictionary<string, System.Type> _cacheActiveRuleTypes = new Dictionary<string, Type>();
-		private static readonly Dictionary<string, IActiveRule> _cacheActiveRuleInstance = new Dictionary<string, IActiveRule>();
-
-		private static readonly Dictionary<string, System.Type> _cacheAddressRuleTypes = new Dictionary<string, System.Type>();
-		private static readonly Dictionary<string, IAddressRule> _cacheAddressRuleInstance = new Dictionary<string, IAddressRule>();
-
 		private static readonly Dictionary<string, System.Type> _cachePackRuleTypes = new Dictionary<string, System.Type>();
 		private static readonly Dictionary<string, IPackRule> _cachePackRuleInstance = new Dictionary<string, IPackRule>();
 
@@ -38,30 +32,6 @@ namespace YooAsset.Editor
 			}
 		}
 
-		public static List<string> GetActiveRuleNames()
-		{
-			if (_setting == null)
-				LoadSettingData();
-
-			List<string> names = new List<string>();
-			foreach (var pair in _cacheActiveRuleTypes)
-			{
-				names.Add(pair.Key);
-			}
-			return names;
-		}
-		public static List<string> GetAddressRuleNames()
-		{
-			if (_setting == null)
-				LoadSettingData();
-
-			List<string> names = new List<string>();
-			foreach (var pair in _cacheAddressRuleTypes)
-			{
-				names.Add(pair.Key);
-			}
-			return names;
-		}
 		public static List<string> GetPackRuleNames()
 		{
 			if (_setting == null)
@@ -86,24 +56,7 @@ namespace YooAsset.Editor
 			}
 			return names;
 		}
-		public static bool HasActiveRuleName(string ruleName)
-		{
-			foreach (var pair in _cacheActiveRuleTypes)
-			{
-				if (pair.Key == ruleName)
-					return true;
-			}
-			return false;
-		}
-		public static bool HasAddressRuleName(string ruleName)
-		{
-			foreach (var pair in _cacheAddressRuleTypes)
-			{
-				if (pair.Key == ruleName)
-					return true;
-			}
-			return false;
-		}
+
 		public static bool HasPackRuleName(string ruleName)
 		{
 			foreach (var pair in _cachePackRuleTypes)
@@ -138,13 +91,10 @@ namespace YooAsset.Editor
 				_cachePackRuleInstance.Clear();
 
 				// 获取所有类型
-				List<Type> types = new List<Type>(100)
+				List<Type> types = new List<Type>()
 				{
-					typeof(PackSeparately),
-					typeof(PackDirectory),
-					typeof(PackTopDirectory),
-					typeof(PackCollector),
 					typeof(PackGroup),
+					typeof(PackCollector),
 					typeof(PackRawFile),
 				};
 
@@ -183,52 +133,6 @@ namespace YooAsset.Editor
 				}
 			}
 
-			// IAddressRule
-			{
-				// 清空缓存集合
-				_cacheAddressRuleTypes.Clear();
-				_cacheAddressRuleInstance.Clear();
-
-				// 获取所有类型
-				List<Type> types = new List<Type>(100)
-				{
-					typeof(AddressByFileName),
-					typeof(AddressByCollectorAndFileName),
-					typeof(AddressByGroupAndFileName)
-				};
-
-				var customTypes = EditorTools.GetAssignableTypes(typeof(IAddressRule));
-				types.AddRange(customTypes);
-				for (int i = 0; i < types.Count; i++)
-				{
-					Type type = types[i];
-					if (_cacheAddressRuleTypes.ContainsKey(type.Name) == false)
-						_cacheAddressRuleTypes.Add(type.Name, type);
-				}
-			}
-
-			// IActiveRule
-			{
-				// 清空缓存集合
-				_cacheActiveRuleTypes.Clear();
-				_cacheActiveRuleInstance.Clear();
-
-				// 获取所有类型
-				List<Type> types = new List<Type>(100)
-				{
-					typeof(EnableGroup),
-					typeof(DisableGroup),
-				};
-
-				var customTypes = EditorTools.GetAssignableTypes(typeof(IActiveRule));
-				types.AddRange(customTypes);
-				for (int i = 0; i < types.Count; i++)
-				{
-					Type type = types[i];
-					if (_cacheActiveRuleTypes.ContainsKey(type.Name) == false)
-						_cacheActiveRuleTypes.Add(type.Name, type);
-				}
-			}
 		}
 
 		/// <summary>
@@ -252,44 +156,16 @@ namespace YooAsset.Editor
 		{
 			Setting.AutoCollectShaders = false;
 			Setting.ShadersBundleName = string.Empty;
-			Setting.Groups.Clear();
+			Setting.Packages.Clear();
 			SaveFile();
 		}
 
-		// 实例类相关
-		public static IActiveRule GetActiveRuleInstance(string ruleName)
-		{
-			if (_cacheActiveRuleInstance.TryGetValue(ruleName, out IActiveRule instance))
-				return instance;
-
-			// 如果不存在创建类的实例
-			if (_cacheActiveRuleTypes.TryGetValue(ruleName, out Type type))
-			{
-				instance = (IActiveRule)Activator.CreateInstance(type);
-				_cacheActiveRuleInstance.Add(ruleName, instance);
-				return instance;
-			}
-			else
-			{
-				throw new Exception($"{nameof(IActiveRule)}类型无效：{ruleName}");
-			}
-		}
+		static IAddressRule addressRuleiInstance;
 		public static IAddressRule GetAddressRuleInstance(string ruleName)
 		{
-			if (_cacheAddressRuleInstance.TryGetValue(ruleName, out IAddressRule instance))
-				return instance;
-
-			// 如果不存在创建类的实例
-			if (_cacheAddressRuleTypes.TryGetValue(ruleName, out Type type))
-			{
-				instance = (IAddressRule)Activator.CreateInstance(type);
-				_cacheAddressRuleInstance.Add(ruleName, instance);
-				return instance;
-			}
-			else
-			{
-				throw new Exception($"{nameof(IAddressRule)}类型无效：{ruleName}");
-			}
+			if (addressRuleiInstance == null)
+				addressRuleiInstance = new AddressByGroupAndFileName();
+			return addressRuleiInstance;
 		}
 		public static IPackRule GetPackRuleInstance(string ruleName)
 		{
@@ -326,32 +202,64 @@ namespace YooAsset.Editor
 			}
 		}
 
-		// 可寻址编辑相关
-		public static void ModifyAddressable(bool enableAddressable)
+		#region 可寻址编辑相关
+		public static void ModifyIncludeInBuild(bool includeInBuild)
 		{
-			Setting.EnableAddressable = enableAddressable;
+			//Setting.IncludeInBuild = includeInBuild;
+
 			IsDirty = true;
 		}
+		#endregion
 
-		// 着色器编辑相关
+		#region 着色器编辑相关
 		public static void ModifyShader(bool isCollectAllShaders, string shadersBundleName)
 		{
 			Setting.AutoCollectShaders = isCollectAllShaders;
 			Setting.ShadersBundleName = shadersBundleName;
 			IsDirty = true;
 		}
+		#endregion
 
-		// 资源分组编辑相关
-		public static void CreateGroup(string groupName)
+		#region 资源分组编辑相关
+		public static void CreatePackage(string packageName)
+		{
+			AssetBundleCollectorPackage package = new AssetBundleCollectorPackage();
+			package.PackageName = packageName;
+			Setting.Packages.Add(package);
+			IsDirty = true;
+		}
+		public static void RemovePackage(AssetBundleCollectorPackage package)
+		{
+			if (Setting.Packages.Remove(package))
+			{
+				IsDirty = true;
+			}
+			else
+			{
+				Debug.LogWarning($"Failed remove group : {package.PackageName}");
+			}
+		}
+		public static void ModifyPackage(AssetBundleCollectorPackage package)
+		{
+			if (package != null)
+			{
+				IsDirty = true;
+			}
+		}
+		#endregion
+
+		#region 资源分组编辑相关
+		public static void CreateGroup(AssetBundleCollectorPackage package, string groupName)
 		{
 			AssetBundleCollectorGroup group = new AssetBundleCollectorGroup();
 			group.GroupName = groupName;
-			Setting.Groups.Add(group);
+			group.PackageName = package.PackageName;
+			package.Groups.Add(group);
 			IsDirty = true;
 		}
-		public static void RemoveGroup(AssetBundleCollectorGroup group)
+		public static void RemoveGroup(AssetBundleCollectorPackage package, AssetBundleCollectorGroup group)
 		{
-			if (Setting.Groups.Remove(group))
+			if (package.Groups.Remove(group))
 			{
 				IsDirty = true;
 			}
@@ -360,20 +268,21 @@ namespace YooAsset.Editor
 				Debug.LogWarning($"Failed remove group : {group.GroupName}");
 			}
 		}
-		public static void ModifyGroup(AssetBundleCollectorGroup group)
+		public static void ModifyGroup(AssetBundleCollectorPackage package, AssetBundleCollectorGroup group)
 		{
-			if (group != null)
+			if (package!=null&&group != null)
 			{
 				IsDirty = true;
 			}
 		}
+		#endregion	
 
-		// 资源收集器编辑相关
+		#region 资源收集器编辑相关
 		public static void CreateCollector(AssetBundleCollectorGroup group, string collectPath)
 		{
 			AssetBundleCollector collector = new AssetBundleCollector();
 			collector.CollectPath = collectPath;
-			collector.BundleName = collectPath;
+			collector.Address = collectPath;
 			group.Collectors.Add(collector);
 			IsDirty = true;
 		}
@@ -395,5 +304,6 @@ namespace YooAsset.Editor
 				IsDirty = true;
 			}
 		}
+		#endregion
 	}
 }

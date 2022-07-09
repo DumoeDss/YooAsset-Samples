@@ -132,10 +132,9 @@ namespace YooAsset.Editor
 
 		public void SetBundleName(string path,string bundleName)
 		{
+			bundleName = bundleName.Replace("/", "_");
 			AssetImporter importer = AssetImporter.GetAtPath(path);
-			UnityEngine. Debug.Log("assetPath:" + importer.assetPath);
-			UnityEngine.Debug.Log("name:" + importer.name);
-			UnityEngine.Debug.Log("bundleName:" + bundleName);
+			UnityEngine. Debug.Log("assetPath:" + importer.assetPath+ " ,bundleName:" + bundleName);
 			importer.assetBundleName = bundleName;
 			AssetDatabase.SaveAssets();
 			AssetDatabase.Refresh();
