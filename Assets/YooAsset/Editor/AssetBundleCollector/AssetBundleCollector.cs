@@ -160,7 +160,7 @@ namespace YooAsset.Editor
 			string address = GetAddress(group, assetPath);
 			string bundleName = GetBundleName(group, assetPath);
 			List<string> assetTags = GetAssetTags(group);
-			CollectAssetInfo collectAssetInfo = new CollectAssetInfo(CollectorType, bundleName, address, assetPath, assetTags, isRawAsset);
+			CollectAssetInfo collectAssetInfo = new CollectAssetInfo(CollectorType, group.PackageName, bundleName, address, assetPath, assetTags, isRawAsset);
 
 			// 注意：模拟构建模式下不需要收集依赖资源
 			if (buildMode == EBuildMode.SimulateBuild)

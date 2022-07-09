@@ -11,6 +11,11 @@ namespace YooAsset.Editor
 		public ECollectorType CollectorType { private set; get; }
 
 		/// <summary>
+		/// 包名称
+		/// </summary>
+		public string PackageID { private set; get; }
+
+		/// <summary>
 		/// 资源包名称
 		/// </summary>
 		public string BundleName { private set; get; }
@@ -41,9 +46,10 @@ namespace YooAsset.Editor
 		public List<string> DependAssets = new List<string>();
 
 
-		public CollectAssetInfo(ECollectorType collectorType, string bundleName, string address, string assetPath, List<string> assetTags, bool isRawAsset)
+		public CollectAssetInfo(ECollectorType collectorType, string packageID, string bundleName, string address, string assetPath, List<string> assetTags, bool isRawAsset)
 		{
 			CollectorType = collectorType;
+			PackageID= packageID;
 			BundleName = bundleName;
 			Address = address;
 			AssetPath = assetPath;
