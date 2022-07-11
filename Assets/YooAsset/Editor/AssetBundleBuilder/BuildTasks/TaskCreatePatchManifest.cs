@@ -3,6 +3,7 @@ using System.IO;
 using System.Collections;
 using System.Collections.Generic;
 using static YooAsset.Editor.AssetBundleBuilder;
+using System.Linq;
 
 namespace YooAsset.Editor
 {
@@ -24,43 +25,105 @@ namespace YooAsset.Editor
 			TaskEncryption.EncryptionContext encryptionContext)
 		{
 			int resourceVersion = buildParameters.Parameters.BuildVersion;
-
+			var bundles= GetAllPatchBundle(buildParameters, buildMapContext, encryptionContext);
 			// 创建新补丁清单
-			PatchManifest patchManifest = new PatchManifest();
-			patchManifest.ResourceVersion = buildParameters.Parameters.BuildVersion;
-			patchManifest.BuildinTags = buildParameters.Parameters.BuildinTags;
-			//patchManifest.PackageID=
-			patchManifest.BundleList = GetAllPatchBundle(buildParameters, buildMapContext, encryptionContext);
-			patchManifest.AssetList = GetAllPatchAsset(buildParameters, buildMapContext, patchManifest);
+			foreach (var bundle in bundles)
+            {
+				var patchManifest = new PatchManifest();
+				patchManifest.ResourceVersion = buildParameters.Parameters.BuildVersion;
+				patchManifest.BuildinTags = buildParameters.Parameters.BuildinTags;
+				patchManifest.PackageName = bundle.Key;
+				patchManifest.BundleList = bundle.Value;
+				patchManifest.DependPackages = new List<string>();
+				patchManifest.DependBundles = new List<string>();
 
-			// 创建补丁清单文件
-			string manifestFilePath = $"{buildParameters.PipelineOutputDirectory}/{YooAssetSettingsData.GetPatchManifestFileName("PatchManifest_"+resourceVersion)}";
-			BuildRunner.Log($"创建补丁清单文件：{manifestFilePath}");
-			PatchManifest.Serialize(manifestFilePath, patchManifest);
+				var patchAssets = GetAllPatchAsset(buildParameters, buildMapContext, patchManifest.PackageName);
+				patchManifest.AssetList=patchAssets.Select(_=>_).Where(_=>!string.IsNullOrEmpty(_.Address)).ToList();
+				foreach (var item in patchManifest.AssetList)
+				{
+					if (item.DependIDs != null)
+					{
+						foreach (var dependID in item.DependIDs)
+						{
+							if (dependID.Contains("@"))
+							{
+								var depend = dependID.Split('@');
+								if (!patchManifest.DependPackages.Contains(depend[0]))
+								{
+									patchManifest.DependPackages.Add(depend[0]);
+								}
 
-			// 创建补丁清单哈希文件
-			string manifestHashFilePath = $"{buildParameters.PipelineOutputDirectory}/{YooAssetSettingsData.GetPatchManifestHashFileName("PatchManifest_" + resourceVersion)}";
-			string manifestHash = HashUtility.FileMD5(manifestFilePath);
-			BuildRunner.Log($"创建补丁清单哈希文件：{manifestHashFilePath}");
-			FileUtility.CreateFile(manifestHashFilePath, manifestHash);
+							}
+						}
+					}
+				}
+
+				var dependAssets = patchAssets.Select(_ => _).Where(_ => string.IsNullOrEmpty(_.Address)).ToList();
+				if(dependAssets!=null&& dependAssets.Count() > 0)
+                {
+                    foreach (var item in dependAssets)
+                    {
+						if (item.DependIDs != null)
+						{
+							foreach (var dependID in item.DependIDs)
+							{
+								if (dependID.Contains("@"))
+								{
+									var depend = dependID.Split('@');
+									if (!patchManifest.DependPackages.Contains(depend[0]))
+									{
+										patchManifest.DependPackages.Add(depend[0]);
+									}
+								}
+								if (!patchManifest.DependBundles.Contains(dependID))
+								{
+									patchManifest.DependBundles.Add(dependID);
+								}
+							}
+						}
+					}
+                }
+		
+				// 创建补丁清单文件
+				string manifestFilePath = $"{buildParameters.PipelineOutputDirectory}/{YooAssetSettingsData.GetPatchManifestFileName("PatchManifest_"+ patchManifest.PackageName+"_" + resourceVersion)}";
+				BuildRunner.Log($"创建补丁清单文件：{manifestFilePath}");
+				PatchManifest.Serialize(manifestFilePath, patchManifest);
+
+				// 创建补丁清单哈希文件
+				string manifestHashFilePath = $"{buildParameters.PipelineOutputDirectory}/{YooAssetSettingsData.GetPatchManifestHashFileName("PatchManifest_" + patchManifest.PackageName + "_" + resourceVersion)}";
+				string manifestHash = HashUtility.FileMD5(manifestFilePath);
+				BuildRunner.Log($"创建补丁清单哈希文件：{manifestHashFilePath}");
+				FileUtility.CreateFile(manifestHashFilePath, manifestHash);
+			}
 		}
 
 		/// <summary>
 		/// 获取资源包列表
 		/// </summary>
-		private List<PatchBundle> GetAllPatchBundle(BuildParametersContext buildParameters, BuildMapContext buildMapContext,
+		private Dictionary<string, List<PatchBundle>> GetAllPatchBundle(BuildParametersContext buildParameters, BuildMapContext buildMapContext,
 			TaskEncryption.EncryptionContext encryptionContext)
 		{
-			List<PatchBundle> result = new List<PatchBundle>(1000);
+			Dictionary<string, List<PatchBundle>> result = new Dictionary<string, List<PatchBundle>>(1000);
 
 			List<string> buildinTags = buildParameters.Parameters.GetBuildinTags();
 			var buildMode = buildParameters.Parameters.BuildMode;
 			bool standardBuild = buildMode == EBuildMode.ForceRebuild || buildMode == EBuildMode.IncrementalBuild;
 			int count = buildMapContext.BundleInfos.Count;
+
 			for (int i = 0; i < count; i++)
             {
 				var bundleInfo = buildMapContext.BundleInfos[i];
 				var bundleName = bundleInfo.BundleName;
+				var package = bundleInfo.Package;
+				var includeInBuild = bundleInfo.IncludeInBuild;
+                if (!includeInBuild)
+                {
+					continue;
+                }
+				if (!result.ContainsKey(package)){
+					result[package] = new List<PatchBundle>();
+				}
+
 				string filePath = $"{buildParameters.PipelineOutputDirectory}/{bundleName}";
 				string hash = GetFileHash(filePath, standardBuild);
 				string crc32 = GetFileCRC(filePath, standardBuild);
@@ -76,9 +139,9 @@ namespace YooAsset.Editor
 					hash += bundleInfo.GetAppendExtension();
 				}
 
-				PatchBundle patchBundle = new PatchBundle(bundleName, bundleName, hash, crc32, size, tags);
+				PatchBundle patchBundle = new PatchBundle(bundleName, hash, crc32, size, tags);
 				patchBundle.SetFlagsValue(isEncrypted, isBuildin, isRawFile);
-				result.Add(patchBundle);
+				result[package].Add(patchBundle);
 			}
 			return result;
 		}
@@ -120,48 +183,69 @@ namespace YooAsset.Editor
 		/// <summary>
 		/// 获取资源列表
 		/// </summary>
-		private List<PatchAsset> GetAllPatchAsset(BuildParametersContext buildParameters, BuildMapContext buildMapContext, PatchManifest patchManifest)
+		private List<PatchAsset> GetAllPatchAsset(BuildParametersContext buildParameters, 
+			BuildMapContext buildMapContext, string package)
 		{
 			List<PatchAsset> result = new List<PatchAsset>(1000);
+
 			foreach (var bundleInfo in buildMapContext.BundleInfos)
 			{
-				var assetInfos = bundleInfo.GetAllPatchAssetInfos();
-				foreach (var assetInfo in assetInfos)
-				{
-					PatchAsset patchAsset = new PatchAsset();
-					patchAsset.Address = assetInfo.Address;
-
-					patchAsset.AssetPath = assetInfo.AssetPath;
-					patchAsset.AssetTags = assetInfo.AssetTags.ToArray();
-					patchAsset.BundleID = GetAssetBundleID(assetInfo.GetBundleName(), patchManifest);
-					patchAsset.DependIDs = GetAssetBundleDependIDs(patchAsset.BundleID, assetInfo, patchManifest);
-					result.Add(patchAsset);
+				if (bundleInfo.Package == package)
+                {
+					var assetInfos = bundleInfo.GetAllPatchAssetInfos();
+                    if (assetInfos == null||assetInfos.Length==0)
+                    {
+						assetInfos = bundleInfo.GetAllDependPatchAssetInfos();
+						foreach (var assetInfo in assetInfos)
+						{
+							PatchAsset patchAsset = new PatchAsset();
+							patchAsset.Address = string.Empty;
+							patchAsset.DependIDs = GetAssetBundleDependIDs(assetInfo.GetBundleName(), assetInfo);
+							result.Add(patchAsset);
+						}
+					}
+                    else
+                    {
+						foreach (var assetInfo in assetInfos)
+						{
+							PatchAsset patchAsset = new PatchAsset();
+							patchAsset.Address = assetInfo.Address;
+							patchAsset.AssetPath = assetInfo.AssetPath;
+							patchAsset.AssetTags = assetInfo.AssetTags.ToArray();
+							patchAsset.BundleID = assetInfo.GetBundleName();
+							patchAsset.DependIDs = GetAssetBundleDependIDs(patchAsset.BundleID, assetInfo);
+							result.Add(patchAsset);
+						}
+					}
+					
 				}
+					
 			}
 			return result;
 		}
-		private string[] GetAssetBundleDependIDs(string mainBundleID, BuildAssetInfo assetInfo, PatchManifest patchManifest)
+		private string[] GetAssetBundleDependIDs(string mainBundleID, BuildAssetInfo assetInfo)
 		{
 			List<string> result = new List<string>();
 			foreach (var dependAssetInfo in assetInfo.AllDependAssetInfos)
 			{
 				if (dependAssetInfo.HasBundleName())
 				{
-					string bundleID = GetAssetBundleID(dependAssetInfo.GetBundleName(), patchManifest);
+					string bundleID = dependAssetInfo.GetBundleName();
 					if (mainBundleID != bundleID)
 					{
-						if (result.Contains(bundleID) == false)
+						if (!result.Contains(bundleID))
 							result.Add(bundleID);
 					}
 				}
 			}
 			return result.ToArray();
 		}
-		private string GetAssetBundleID(string bundleName, PatchManifest patchManifest)
+		private string GetAssetBundleID(string bundleName, string package, List<PatchManifest> patchManifests)
 		{
+			var patchManifest = patchManifests.Find(_ => _.PackageName == package);
 			var patchBundle = patchManifest.BundleList.Find(_=>_.BundleName== bundleName);
 			if (patchBundle != null)
-				return patchBundle.Id;
+				return patchBundle.BundleName;
 			throw new Exception($"Not found bundle name : {bundleName}");
 		}
 	}

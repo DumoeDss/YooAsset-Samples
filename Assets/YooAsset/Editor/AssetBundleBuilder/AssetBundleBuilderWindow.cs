@@ -120,6 +120,9 @@ namespace YooAsset.Editor
 				{
 					AssetBundleBuilderSettingData.Setting.AppendExtension = _appendExtensionToggle.value;
 				});
+				// 设置BundleName
+				var dependencyButton = root.Q<Button>("CalcDependencies");
+				dependencyButton.clicked += DependencyButton_clicked; ;
 
 				// 设置BundleName
 				var bundleButton = root.Q<Button>("SetBundleName");
@@ -164,6 +167,21 @@ namespace YooAsset.Editor
 			}
 		}
 
+		private void DependencyButton_clicked()
+		{
+			var buildMode = AssetBundleBuilderSettingData.Setting.BuildMode;
+			if (EditorUtility.DisplayDialog("提示", $"查看依赖！", "Yes", "No"))
+			{
+				EditorTools.ClearUnityConsole();
+				EditorApplication.delayCall += ExecuteDependency;
+			}
+			else
+			{
+				Debug.LogWarning("[Build] 打包已经取消");
+			}
+		}
+
+		
 		private void BuildButton_clicked()
 		{
 			var buildMode = AssetBundleBuilderSettingData.Setting.BuildMode;
@@ -176,6 +194,27 @@ namespace YooAsset.Editor
 			{
 				Debug.LogWarning("[Build] 打包已经取消");
 			}
+		}
+
+		private void ExecuteDependency()
+		{
+			var buildMode = (EBuildMode)_buildModeField.value;
+
+			string defaultOutputRoot = AssetBundleBuilderHelper.GetDefaultOutputRoot();
+			BuildParameters buildParameters = new BuildParameters();
+			buildParameters.OutputRoot = defaultOutputRoot;
+			buildParameters.BuildTarget = _buildTarget;
+			buildParameters.BuildMode = buildMode;
+			buildParameters.BuildVersion = _buildVersionField.value;
+			buildParameters.BuildinTags = _buildinTagsField.value;
+			buildParameters.VerifyBuildingResult = true;
+			buildParameters.AppendFileExtension = _appendExtensionToggle.value;
+			buildParameters.CopyBuildinTagFiles = buildMode == EBuildMode.ForceRebuild;
+			buildParameters.EncryptionServices = CreateEncryptionServicesInstance();
+			buildParameters.CompressOption = (ECompressOption)_compressionField.value;
+
+			AssetBundleBuilder builder = new AssetBundleBuilder();
+			builder.CalcDependency(buildParameters);
 		}
 
 		/// <summary>

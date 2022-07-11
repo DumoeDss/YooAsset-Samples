@@ -50,42 +50,32 @@ namespace YooAsset.Editor
 		{
 			Dictionary<string, CollectAssetInfo> result = new Dictionary<string, CollectAssetInfo>(10000);
 
-			// 检测Package是否激活
-			//IActiveRule activeRule = AssetBundleCollectorSettingData.GetActiveRuleInstance(ActiveRuleName);
-			//if (activeRule.IsActiveGroup() == false)
-			//{
-			//	return new List<CollectAssetInfo>();
-			//}
+			// 收集打包资源
+			foreach (var group in Groups)
+			{
+				var temper = group.GetAllCollectAssets(buildMode, this);
+				foreach (var assetInfo in temper)
+				{
+					if (result.ContainsKey(assetInfo.AssetPath) == false)
+						result.Add(assetInfo.AssetPath, assetInfo);
+					else
+						throw new Exception($"The collecting asset file is existed : {assetInfo.AssetPath} in group : {group.GroupName}");
+				}
+			}
 
-			//// 收集打包资源
-			//foreach (var collector in Collectors)
-			//{
-			//	var temper = collector.GetAllCollectAssets(buildMode, this);
-			//	foreach (var assetInfo in temper)
-			//	{
-			//		if (result.ContainsKey(assetInfo.AssetPath) == false)
-			//			result.Add(assetInfo.AssetPath, assetInfo);
-			//		else
-			//			throw new Exception($"The collecting asset file is existed : {assetInfo.AssetPath} in group : {GroupName}");
-			//	}
-			//}
-
-			//// 检测可寻址地址是否重复
-			//if (AssetBundleCollectorSettingData.Setting.EnableAddressable)
-			//{
-			//	HashSet<string> adressTemper = new HashSet<string>();
-			//	foreach (var collectInfoPair in result)
-			//	{
-			//		if (collectInfoPair.Value.CollectorType == ECollectorType.MainAssetCollector)
-			//		{
-			//			string address = collectInfoPair.Value.Address;
-			//			if (adressTemper.Contains(address) == false)
-			//				adressTemper.Add(address);
-			//			else
-			//				throw new Exception($"The address is existed : {address} in group : {GroupName}");
-			//		}
-			//	}
-			//}
+			// 检测可寻址地址是否重复
+			HashSet<string> adressTemper = new HashSet<string>();
+			foreach (var collectInfoPair in result)
+			{
+				if (collectInfoPair.Value.CollectorType == ECollectorType.MainAssetCollector)
+				{
+					string address = collectInfoPair.Value.Address;
+					if (adressTemper.Contains(address) == false)
+						adressTemper.Add(address);
+					else
+						throw new Exception($"The address is existed : {address} in package : {PackageName}");
+				}
+			}
 
 			// 返回列表
 			return result.Values.ToList();

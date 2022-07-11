@@ -50,7 +50,7 @@ namespace YooAsset.Editor
 			if (AssetDatabase.LoadAssetAtPath<UnityEngine.Object>(CollectPath) == null)
 				return false;
 
-            if (string.IsNullOrEmpty(Address))
+            if (CollectorType== ECollectorType.MainAssetCollector&&string.IsNullOrEmpty(Address))
             {
 				UnityEngine.Debug.LogError(CollectPath + " 的Address 为空，请检查! ");
 				return false;
@@ -83,7 +83,7 @@ namespace YooAsset.Editor
 		/// <summary>
 		/// 获取打包收集的资源文件
 		/// </summary>
-		public List<CollectAssetInfo> GetAllCollectAssets(EBuildMode buildMode, AssetBundleCollectorGroup group)
+		public List<CollectAssetInfo> GetAllCollectAssets(EBuildMode buildMode, AssetBundleCollectorPackage package, AssetBundleCollectorGroup group)
 		{
 			// 注意：模拟构建模式下只收集主资源
 			if (buildMode == EBuildMode.SimulateBuild)
@@ -113,7 +113,7 @@ namespace YooAsset.Editor
 					{
 						if (result.ContainsKey(assetPath) == false)
 						{
-							var collectAssetInfo = CreateCollectAssetInfo(buildMode, group, assetPath, isRawAsset);
+							var collectAssetInfo = CreateCollectAssetInfo(buildMode, package, group, assetPath, isRawAsset);
 							result.Add(assetPath, collectAssetInfo);
 						}
 						else
@@ -128,7 +128,7 @@ namespace YooAsset.Editor
 				string assetPath = CollectPath;
 				if (IsValidateAsset(assetPath) && IsCollectAsset(assetPath))
 				{
-					var collectAssetInfo = CreateCollectAssetInfo(buildMode, group, assetPath, isRawAsset);
+					var collectAssetInfo = CreateCollectAssetInfo(buildMode, package, group, assetPath, isRawAsset);
 					result.Add(assetPath, collectAssetInfo);
 				}
 				else
@@ -155,12 +155,12 @@ namespace YooAsset.Editor
 			return result.Values.ToList();
 		}
 
-		private CollectAssetInfo CreateCollectAssetInfo(EBuildMode buildMode, AssetBundleCollectorGroup group, string assetPath, bool isRawAsset)
+		private CollectAssetInfo CreateCollectAssetInfo(EBuildMode buildMode, AssetBundleCollectorPackage package, AssetBundleCollectorGroup group, string assetPath, bool isRawAsset)
 		{
 			string address = GetAddress(group, assetPath);
 			string bundleName = GetBundleName(group, assetPath);
 			List<string> assetTags = GetAssetTags(group);
-			CollectAssetInfo collectAssetInfo = new CollectAssetInfo(CollectorType, group.PackageName, bundleName, address, assetPath, assetTags, isRawAsset);
+			CollectAssetInfo collectAssetInfo = new CollectAssetInfo(CollectorType, package.PackageName, package.IncludeInBuild, bundleName, address, assetPath, assetTags, isRawAsset);
 
 			// 注意：模拟构建模式下不需要收集依赖资源
 			if (buildMode == EBuildMode.SimulateBuild)
@@ -227,7 +227,7 @@ namespace YooAsset.Editor
 			// 根据规则设置获取资源包名称
 			{
 				IPackRule packRuleInstance = AssetBundleCollectorSettingData.GetPackRuleInstance(PackRuleName);
-				string bundleName = packRuleInstance.GetBundleName(new PackRuleData(assetPath, CollectPath,Address, group.GroupName));
+				string bundleName = packRuleInstance.GetBundleName(new PackRuleData(assetPath, group.GroupName, CollectPath, Address));
 				return EditorTools.GetRegularPath(bundleName).ToLower();
 			}
 		}

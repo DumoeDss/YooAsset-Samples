@@ -253,7 +253,6 @@ namespace YooAsset.Editor
 		{
 			AssetBundleCollectorGroup group = new AssetBundleCollectorGroup();
 			group.GroupName = groupName;
-			group.PackageName = package.PackageName;
 			package.Groups.Add(group);
 			IsDirty = true;
 		}

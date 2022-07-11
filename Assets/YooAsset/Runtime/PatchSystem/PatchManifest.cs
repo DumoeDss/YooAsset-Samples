@@ -22,9 +22,10 @@ namespace YooAsset
 		/// </summary>
 		public string BuildinTags;
 
-		public string PackageID;
+		public string PackageName;
 
-		public List<string> DependIDs;
+		public List<string> DependPackages;
+		public List<string> DependBundles;
 
 		/// <summary>
 		/// 资源列表（主动收集的资源列表）
@@ -115,15 +116,15 @@ namespace YooAsset
 		{
 			if (Assets.TryGetValue(assetPath, out PatchAsset patchAsset))
 			{
-				string bundleID = patchAsset.BundleID;
-				var patchBundle = BundleList.Find(_ => _.Id == bundleID);
+				string bundleName = patchAsset.BundleID;
+				var patchBundle = BundleList.Find(_ => _.BundleName == bundleName);
 				if (patchBundle != null)
 				{
 					return patchBundle.BundleName;
 				}
 				else
 				{
-					throw new Exception($"Invalid bundle id : {bundleID} Asset path : {assetPath}");
+					throw new Exception($"Invalid bundle id : {bundleName} Asset path : {assetPath}");
 				}
 			}
 			else
@@ -141,16 +142,16 @@ namespace YooAsset
 			if (Assets.TryGetValue(assetPath, out PatchAsset patchAsset))
 			{
 				List<string> result = new List<string>(patchAsset.DependIDs.Length);
-				foreach (var dependID in patchAsset.DependIDs)
+				foreach (var dependName in patchAsset.DependIDs)
 				{
-					var dependPatchBundle = BundleList.Find(_ => _.Id == dependID);
+					var dependPatchBundle = BundleList.Find(_ => _.BundleName == dependName);
 					if (dependPatchBundle!=null)
 					{
 						result.Add(dependPatchBundle.BundleName);
 					}
 					else
 					{
-						throw new Exception($"Invalid bundle id : {dependID} Asset path : {assetPath}");
+						throw new Exception($"Invalid bundle id : {dependName} Asset path : {assetPath}");
 					}
 				}
 				return result.ToArray();

@@ -39,10 +39,15 @@ namespace YooAsset.Editor
 			// 4. 录入所有收集器收集的资源
 			foreach (var collectAssetInfo in allCollectAssets)
 			{
-				if (buildAssetDic.ContainsKey(collectAssetInfo.AssetPath) == false)
+				if (!buildAssetDic.ContainsKey(collectAssetInfo.AssetPath))
 				{
-					var buildAssetInfo = new BuildAssetInfo(collectAssetInfo.CollectorType, collectAssetInfo.BundleName,
-						collectAssetInfo.Address, collectAssetInfo.AssetPath, collectAssetInfo.IsRawAsset);
+					var buildAssetInfo = new BuildAssetInfo(collectAssetInfo.CollectorType, 
+						collectAssetInfo.PackageName,
+						collectAssetInfo.IncludeInBuild,
+						collectAssetInfo.BundleName,
+						collectAssetInfo.Address, 
+						collectAssetInfo.AssetPath, 
+						collectAssetInfo.IsRawAsset);
 					buildAssetInfo.AddAssetTags(collectAssetInfo.AssetTags);
 					buildAssetInfo.AddBundleTags(collectAssetInfo.AssetTags);
 					buildAssetDic.Add(collectAssetInfo.AssetPath, buildAssetInfo);
@@ -65,7 +70,11 @@ namespace YooAsset.Editor
 					}
 					else
 					{
-						var buildAssetInfo = new BuildAssetInfo(dependAssetPath);
+						var buildAssetInfo = new BuildAssetInfo(dependAssetPath, 
+							collectAssetInfo.PackageName, 
+							collectAssetInfo.IncludeInBuild);
+
+
 						buildAssetInfo.AddBundleTags(collectAssetInfo.AssetTags);
 						buildAssetInfo.AddReferenceBundleName(collectAssetInfo.BundleName);
 						buildAssetDic.Add(dependAssetPath, buildAssetInfo);
@@ -81,7 +90,17 @@ namespace YooAsset.Editor
 				foreach (var dependAssetPath in collectAssetInfo.DependAssets)
 				{
 					if (buildAssetDic.TryGetValue(dependAssetPath, out BuildAssetInfo value))
-						dependAssetInfos.Add(value);
+                    {
+						if(value.Package != collectAssetInfo.PackageName)
+                        {
+							dependAssetInfos.Add(new BuildAssetInfo(value));
+						}
+						else
+                        {
+							dependAssetInfos.Add(value);
+						}
+
+					}
 					else
 						throw new Exception("Should never get here !");
 				}
@@ -99,7 +118,7 @@ namespace YooAsset.Editor
 			foreach (KeyValuePair<string, BuildAssetInfo> pair in buildAssetDic)
 			{
 				var buildAssetInfo = pair.Value;
-				if (buildAssetInfo.HasBundleName() == false)
+				if (!buildAssetInfo.HasBundleName())
 					removeBuildList.Add(buildAssetInfo);
 			}
 			foreach (var removeValue in removeBuildList)

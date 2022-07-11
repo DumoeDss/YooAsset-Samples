@@ -11,11 +11,6 @@ namespace YooAsset.Editor
 	public class AssetBundleCollectorGroup
 	{
 		/// <summary>
-		/// 包名称
-		/// </summary>
-		public string PackageName = string.Empty;
-
-		/// <summary>
 		/// 分组名称
 		/// </summary>
 		public string GroupName = string.Empty;
@@ -59,17 +54,17 @@ namespace YooAsset.Editor
 		/// <summary>
 		/// 获取打包收集的资源文件
 		/// </summary>
-		public List<CollectAssetInfo> GetAllCollectAssets(EBuildMode buildMode)
+		public List<CollectAssetInfo> GetAllCollectAssets(EBuildMode buildMode,AssetBundleCollectorPackage package)
 		{
 			Dictionary<string, CollectAssetInfo> result = new Dictionary<string, CollectAssetInfo>(10000);
 
 			// 收集打包资源
 			foreach (var collector in Collectors)
 			{
-				var temper = collector.GetAllCollectAssets(buildMode, this);
+				var temper = collector.GetAllCollectAssets(buildMode, package, this);
 				foreach (var assetInfo in temper)
 				{
-					if (result.ContainsKey(assetInfo.AssetPath) == false)
+					if (!result.ContainsKey(assetInfo.AssetPath))
 						result.Add(assetInfo.AssetPath, assetInfo);
 					else
 						throw new Exception($"The collecting asset file is existed : {assetInfo.AssetPath} in group : {GroupName}");

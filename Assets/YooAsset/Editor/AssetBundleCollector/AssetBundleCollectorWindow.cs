@@ -278,7 +278,18 @@ namespace YooAsset.Editor
 			if (AssetBundleCollectorSettingData.IsDirty)
 				AssetBundleCollectorSettingData.SaveFile();
 		}
+		[MenuItem("File/Save All %s", false, 0)] // ctrl+s
+		public static void SaveAll()
+		{
+			// Save scenes + prefab instances
+			EditorApplication.ExecuteMenuItem("File/Save");
 
+			// Save dirty ScriptableOjects (.assets)
+			AssetDatabase.SaveAssets();
+
+			if (AssetBundleCollectorSettingData.IsDirty)
+				AssetBundleCollectorSettingData.SaveFile();
+		}
 		private void RefreshWindow()
 		{
 			_autoCollectShaderToogle.SetValueWithoutNotify(AssetBundleCollectorSettingData.Setting.AutoCollectShaders);
@@ -630,6 +641,10 @@ namespace YooAsset.Editor
 		}
 		private void BindCollectorListViewItem(VisualElement element, int index)
 		{
+			var selectPackage = _packageListView.selectedItem as AssetBundleCollectorPackage;
+			if (selectPackage == null)
+				return;
+
 			var selectGroup = _groupListView.selectedItem as AssetBundleCollectorGroup;
 			if (selectGroup == null)
 				return;
@@ -645,7 +660,7 @@ namespace YooAsset.Editor
 			foldout.RegisterValueChangedCallback(evt =>
 			{
 				if (evt.newValue)
-					RefreshFoldout(foldout, selectGroup, collector);
+					RefreshFoldout(foldout, selectPackage, selectGroup, collector);
 				else
 					foldout.Clear();
 			});
@@ -681,7 +696,7 @@ namespace YooAsset.Editor
 				AssetBundleCollectorSettingData.ModifyCollector(selectGroup, collector);
 				if (foldout.value)
 				{
-					RefreshFoldout(foldout, selectGroup, collector);
+					RefreshFoldout(foldout, selectPackage, selectGroup, collector);
 				}
 			});
 
@@ -694,7 +709,7 @@ namespace YooAsset.Editor
 				AssetBundleCollectorSettingData.ModifyCollector(selectGroup, collector);
 				if (foldout.value)
 				{
-					RefreshFoldout(foldout, selectGroup, collector);
+					RefreshFoldout(foldout, selectPackage, selectGroup, collector);
 				}
 			});
 
@@ -708,7 +723,7 @@ namespace YooAsset.Editor
 				AssetBundleCollectorSettingData.ModifyCollector(selectGroup, collector);
 				if (foldout.value)
 				{
-					RefreshFoldout(foldout, selectGroup, collector);
+					RefreshFoldout(foldout, selectPackage, selectGroup, collector);
 				}
 			});
 
@@ -721,7 +736,7 @@ namespace YooAsset.Editor
 				AssetBundleCollectorSettingData.ModifyCollector(selectGroup, collector);
 			});
 		}
-		private void RefreshFoldout(Foldout foldout, AssetBundleCollectorGroup group, AssetBundleCollector collector)
+		private void RefreshFoldout(Foldout foldout, AssetBundleCollectorPackage package, AssetBundleCollectorGroup group, AssetBundleCollector collector)
 		{
 			// 清空旧元素
 			foldout.Clear();
@@ -738,7 +753,7 @@ namespace YooAsset.Editor
 
 				try
 				{
-					collectAssetInfos = collector.GetAllCollectAssets(EBuildMode.DryRunBuild, group);
+					collectAssetInfos = collector.GetAllCollectAssets(EBuildMode.DryRunBuild, package, group);
 				}
 				catch (System.Exception e)
 				{

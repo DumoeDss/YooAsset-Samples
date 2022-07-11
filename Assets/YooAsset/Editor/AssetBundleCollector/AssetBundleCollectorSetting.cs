@@ -41,21 +41,15 @@ namespace YooAsset.Editor
 
             foreach (var package in Packages)
             {
-				// 收集打包资源
-				foreach (var group in package.Groups)
+				var temper = package.GetAllGroupAssets(buildMode);
+				foreach (var assetInfo in temper)
 				{
-					var temper = group.GetAllCollectAssets(buildMode);
-					foreach (var assetInfo in temper)
-					{
-						if (result.ContainsKey(assetInfo.AssetPath) == false)
-							result.Add(assetInfo.AssetPath, assetInfo);
-						else
-							throw new Exception($"The collecting asset file is existed : {assetInfo.AssetPath} in group setting.");
-					}
+					if (!result.ContainsKey(assetInfo.AssetPath))
+						result.Add(assetInfo.AssetPath, assetInfo);
+					else
+						throw new Exception($"The collecting asset file is existed : {assetInfo.AssetPath} in group setting.");
 				}
 			}
-
-
 
 			// 检测可寻址地址是否重复
 			HashSet<string> adressTemper = new HashSet<string>();

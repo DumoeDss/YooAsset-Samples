@@ -300,6 +300,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   version: 100
   PlayMode: 2
+  hostServerIP: http://192.168.53.154:1024
 --- !u!4 &1281760861
 Transform:
   m_ObjectHideFlags: 0
