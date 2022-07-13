@@ -59,9 +59,6 @@ namespace YooAsset.Editor
 			}
 
 			// 读取公共配置
-			bool enableAddressable = false;
-			bool autoCollectShaders = false;
-			string shaderBundleName = string.Empty;
 			var commonNodeList = root.GetElementsByTagName(XmlCommon);
 			if (commonNodeList.Count > 0)
 			{
@@ -72,10 +69,6 @@ namespace YooAsset.Editor
 					throw new Exception($"Not found attribute {XmlAutoCollectShader} in {XmlCommon}");
 				if (commonElement.HasAttribute(XmlShaderBundleName) == false)
 					throw new Exception($"Not found attribute {XmlShaderBundleName} in {XmlCommon}");
-
-				enableAddressable = commonElement.GetAttribute(XmlEnableAddressable) == "True" ? true : false;
-				autoCollectShaders = commonElement.GetAttribute(XmlAutoCollectShader) == "True" ? true : false;
-				shaderBundleName = commonElement.GetAttribute(XmlShaderBundleName);
 			}
 
 			List<AssetBundleCollectorPackage> packageTemper = new List<AssetBundleCollectorPackage>();
@@ -149,8 +142,6 @@ namespace YooAsset.Editor
 
 			// 保存配置数据
 			AssetBundleCollectorSettingData.ClearAll();
-			AssetBundleCollectorSettingData.Setting.AutoCollectShaders = autoCollectShaders;
-			AssetBundleCollectorSettingData.Setting.ShadersBundleName = shaderBundleName;
 			AssetBundleCollectorSettingData.Setting.Packages.AddRange(packageTemper);
 			AssetBundleCollectorSettingData.SaveFile();
 			Debug.Log($"导入配置完毕！");
@@ -175,12 +166,6 @@ namespace YooAsset.Editor
 
 			// 设置配置版本
 			root.SetAttribute(XmlVersion, ConfigVersion);
-
-			// 设置公共配置
-			var commonElement = xmlDoc.CreateElement(XmlCommon);
-			commonElement.SetAttribute(XmlAutoCollectShader, AssetBundleCollectorSettingData.Setting.AutoCollectShaders.ToString());
-			commonElement.SetAttribute(XmlShaderBundleName, AssetBundleCollectorSettingData.Setting.ShadersBundleName);
-			root.AppendChild(commonElement);
 
             // 设置分组配置
             foreach (var package in AssetBundleCollectorSettingData.Setting.Packages)

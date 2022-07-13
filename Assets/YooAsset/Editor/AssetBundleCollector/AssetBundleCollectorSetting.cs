@@ -9,16 +9,6 @@ namespace YooAsset.Editor
 	public class AssetBundleCollectorSetting : ScriptableObject
 	{
 
-		/// <summary>
-		/// 自动收集着色器
-		/// </summary>
-		public bool AutoCollectShaders = true;
-
-		/// <summary>
-		/// 自动收集的着色器资源包名称
-		/// </summary>
-		public string ShadersBundleName = "myshaders";
-
 		public List<AssetBundleCollectorPackage> Packages = new List<AssetBundleCollectorPackage>();
 
 		/// <summary>

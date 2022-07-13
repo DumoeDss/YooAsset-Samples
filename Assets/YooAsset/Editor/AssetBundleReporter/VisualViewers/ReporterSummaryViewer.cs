@@ -63,14 +63,11 @@ namespace YooAsset.Editor
 			_items.Add(new ItemWrapper("构建耗时", $"{buildReport.Summary.BuildSeconds}秒"));
 			_items.Add(new ItemWrapper("构建平台", $"{buildReport.Summary.BuildTarget}"));
 			_items.Add(new ItemWrapper("构建模式", $"{buildReport.Summary.BuildMode}"));
-			_items.Add(new ItemWrapper("构建版本", $"{buildReport.Summary.BuildVersion}"));
+			//_items.Add(new ItemWrapper("构建版本", $"{buildReport.Summary.BuildVersion}"));
 			_items.Add(new ItemWrapper("内置资源标签", $"{buildReport.Summary.BuildinTags}"));
 
-			_items.Add(new ItemWrapper("启用可寻址资源定位", $"{buildReport.Summary.EnableAddressable}"));
 			_items.Add(new ItemWrapper("追加文件扩展名", $"{buildReport.Summary.AppendFileExtension}"));
 			_items.Add(new ItemWrapper("拷贝内置资源文件", $"{buildReport.Summary.CopyBuildinTagFiles}"));
-			_items.Add(new ItemWrapper("自动收集着色器", $"{buildReport.Summary.AutoCollectShaders}"));
-			_items.Add(new ItemWrapper("着色器资源包名称", $"{buildReport.Summary.ShadersBundleName}"));
 			_items.Add(new ItemWrapper("加密服务类名称", $"{buildReport.Summary.EncryptionServicesClassName}"));
 
 			_items.Add(new ItemWrapper(string.Empty, string.Empty));

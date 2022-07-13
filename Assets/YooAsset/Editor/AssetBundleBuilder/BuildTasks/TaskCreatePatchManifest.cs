@@ -7,7 +7,12 @@ using System.Linq;
 
 namespace YooAsset.Editor
 {
-	[TaskAttribute("创建补丁清单文件")]
+	public class CreatePatchManifestContext : IContextObject
+	{
+		public List<string> PatchManifestPaths { get; set; }
+	}
+
+		[TaskAttribute("创建补丁清单文件")]
 	public class TaskCreatePatchManifest : IBuildTask
 	{
 		void IBuildTask.Run(BuildContext context)
@@ -15,15 +20,18 @@ namespace YooAsset.Editor
 			var buildParameters = context.GetContextObject<BuildParametersContext>();
 			var buildMapContext = context.GetContextObject<BuildMapContext>();
 			var encryptionContext = context.GetContextObject<TaskEncryption.EncryptionContext>();	
-			CreatePatchManifestFile(buildParameters, buildMapContext, encryptionContext);
+			var createPatchManifestContext =  CreatePatchManifestFile(buildParameters, buildMapContext, encryptionContext);
+			context.SetContextObject(createPatchManifestContext);
 		}
 
 		/// <summary>
 		/// 创建补丁清单文件到输出目录
 		/// </summary>
-		private void CreatePatchManifestFile(BuildParametersContext buildParameters, BuildMapContext buildMapContext,
+		private CreatePatchManifestContext CreatePatchManifestFile(BuildParametersContext buildParameters, BuildMapContext buildMapContext,
 			TaskEncryption.EncryptionContext encryptionContext)
 		{
+			CreatePatchManifestContext createPatchManifestContext = new CreatePatchManifestContext();
+			createPatchManifestContext.PatchManifestPaths = new List<string>();
 			int resourceVersion = buildParameters.Parameters.BuildVersion;
 			var bundles= GetAllPatchBundle(buildParameters, buildMapContext, encryptionContext);
 			// 创建新补丁清单
@@ -85,16 +93,25 @@ namespace YooAsset.Editor
                 }
 		
 				// 创建补丁清单文件
-				string manifestFilePath = $"{buildParameters.PipelineOutputDirectory}/{YooAssetSettingsData.GetPatchManifestFileName("PatchManifest_"+ patchManifest.PackageName+"_" + resourceVersion)}";
+				string manifestFilePath = $"{buildParameters.PipelineOutputDirectory}/{"Manifest_" + patchManifest.PackageName}";
 				BuildRunner.Log($"创建补丁清单文件：{manifestFilePath}");
 				PatchManifest.Serialize(manifestFilePath, patchManifest);
-
+				var crc = GetFileCRC(manifestFilePath);
+				var path = $"{manifestFilePath}_{crc}";
+				if(File.Exists(path))
+					File.Delete(path);
+				File.Move(manifestFilePath, path);
+				createPatchManifestContext.PatchManifestPaths.Add($"{"Manifest_" + patchManifest.PackageName}_{crc}");
 				// 创建补丁清单哈希文件
-				string manifestHashFilePath = $"{buildParameters.PipelineOutputDirectory}/{YooAssetSettingsData.GetPatchManifestHashFileName("PatchManifest_" + patchManifest.PackageName + "_" + resourceVersion)}";
-				string manifestHash = HashUtility.FileMD5(manifestFilePath);
+				string manifestHashFilePath = $"{buildParameters.PipelineOutputDirectory}/{YooAssetSettingsData.GetPatchManifestHashFileName("Manifest_" + patchManifest.PackageName)}";
 				BuildRunner.Log($"创建补丁清单哈希文件：{manifestHashFilePath}");
-				FileUtility.CreateFile(manifestHashFilePath, manifestHash);
+				FileUtility.CreateFile(manifestHashFilePath, crc);
+
+				//FileUtility.CreateFile($"{path}.ver", crc);
+
 			}
+
+			return createPatchManifestContext;
 		}
 
 		/// <summary>
@@ -158,21 +175,21 @@ namespace YooAsset.Editor
 			}
 			return false;
 		}
-		private string GetFileHash(string filePath, bool standardBuild)
+		private string GetFileHash(string filePath, bool standardBuild = true)
 		{
 			if (standardBuild)
 				return HashUtility.FileMD5(filePath);
 			else
 				return "00000000000000000000000000000000"; //32位
 		}
-		private string GetFileCRC(string filePath, bool standardBuild)
+		private string GetFileCRC(string filePath, bool standardBuild=true)
 		{
 			if (standardBuild)
 				return HashUtility.FileCRC32(filePath);
 			else
 				return "00000000"; //8位
 		}
-		private long GetFileSize(string filePath, bool standardBuild)
+		private long GetFileSize(string filePath, bool standardBuild = true)
 		{
 			if (standardBuild)
 				return FileUtility.GetFileSize(filePath);

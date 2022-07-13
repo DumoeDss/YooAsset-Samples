@@ -146,7 +146,7 @@ namespace YooAsset.Editor
 			{
 				new TaskPrepare(), //前期准备工作
 				new TaskGetBuildMap(), //获取构建列表
-				new TaskSetBundleName(), //开始执行构建
+				new TaskSetBundleName(), //设置BundleName
 			};
 
 			if (buildParameters.BuildMode == EBuildMode.SimulateBuild)
@@ -183,8 +183,8 @@ namespace YooAsset.Editor
 				new TaskVerifyBuildResult(), //验证构建结果
 				new TaskEncryption(), //加密资源文件
 				new TaskCreatePatchManifest(), //创建清单文件
-				//new TaskCreateReport(), //创建报告文件
-				//new TaskCreatePatchPackage(), //制作补丁包
+				new TaskCreateReport(), //创建报告文件
+				new TaskCreatePatchPackage(), //制作补丁包
 				//new TaskCopyBuildinFiles(), //拷贝内置文件
 			};
 

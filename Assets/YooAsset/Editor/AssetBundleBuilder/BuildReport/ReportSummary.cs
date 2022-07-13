@@ -44,11 +44,6 @@ namespace YooAsset.Editor
 		public string BuildinTags;
 
 		/// <summary>
-		/// 启用可寻址资源定位
-		/// </summary>
-		public bool EnableAddressable;
-
-		/// <summary>
 		/// 追加文件扩展名
 		/// </summary>
 		public bool AppendFileExtension;
@@ -57,16 +52,6 @@ namespace YooAsset.Editor
 		/// 拷贝内置资源文件
 		/// </summary>
 		public bool CopyBuildinTagFiles;
-
-		/// <summary>
-		/// 自动收集着色器
-		/// </summary>
-		public bool AutoCollectShaders;
-
-		/// <summary>
-		/// 自动收集的着色器资源包名称
-		/// </summary>
-		public string ShadersBundleName;
 
 		/// <summary>
 		/// 加密服务类名称

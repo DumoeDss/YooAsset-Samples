@@ -25,9 +25,6 @@ namespace YooAsset.Editor
 		private PopupField<string> _activeRulePopupField;
 		private PopupField<string> _packRulePopupField;
 
-		private Toggle _autoCollectShaderToogle;
-		private TextField _shaderBundleNameTxt;
-
 		#region Package
 		private ListView _packageListView;
 		private TextField _packageNameTxt;
@@ -79,20 +76,6 @@ namespace YooAsset.Editor
 				exportBtn.clicked += ExportBtn_clicked;
 				var importBtn = root.Q<Button>("ImportButton");
 				importBtn.clicked += ImportBtn_clicked;
-
-				// 公共设置相关
-		
-				_autoCollectShaderToogle = root.Q<Toggle>("AutoCollectShader");
-				_autoCollectShaderToogle.RegisterValueChangedCallback(evt =>
-				{
-					AssetBundleCollectorSettingData.ModifyShader(evt.newValue, _shaderBundleNameTxt.value);
-					_shaderBundleNameTxt.SetEnabled(evt.newValue);
-				});
-				_shaderBundleNameTxt = root.Q<TextField>("ShaderBundleName");
-				_shaderBundleNameTxt.RegisterValueChangedCallback(evt =>
-				{
-					AssetBundleCollectorSettingData.ModifyShader(_autoCollectShaderToogle.value, evt.newValue);
-				});
 
 				#region Package列表相关
 				_packageListView = root.Q<ListView>("PackageListView");
@@ -292,9 +275,6 @@ namespace YooAsset.Editor
 		}
 		private void RefreshWindow()
 		{
-			_autoCollectShaderToogle.SetValueWithoutNotify(AssetBundleCollectorSettingData.Setting.AutoCollectShaders);
-			_shaderBundleNameTxt.SetEnabled(AssetBundleCollectorSettingData.Setting.AutoCollectShaders);
-			_shaderBundleNameTxt.SetValueWithoutNotify(AssetBundleCollectorSettingData.Setting.ShadersBundleName);
 			_groupContainer.visible = false;
 	
 			FillPackageViewData();

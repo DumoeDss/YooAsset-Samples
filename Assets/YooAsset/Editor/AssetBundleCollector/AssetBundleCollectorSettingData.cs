@@ -154,8 +154,6 @@ namespace YooAsset.Editor
 		/// </summary>
 		public static void ClearAll()
 		{
-			Setting.AutoCollectShaders = false;
-			Setting.ShadersBundleName = string.Empty;
 			Setting.Packages.Clear();
 			SaveFile();
 		}
@@ -201,24 +199,6 @@ namespace YooAsset.Editor
 				throw new Exception($"{nameof(IFilterRule)}类型无效：{ruleName}");
 			}
 		}
-
-		#region 可寻址编辑相关
-		public static void ModifyIncludeInBuild(bool includeInBuild)
-		{
-			//Setting.IncludeInBuild = includeInBuild;
-
-			IsDirty = true;
-		}
-		#endregion
-
-		#region 着色器编辑相关
-		public static void ModifyShader(bool isCollectAllShaders, string shadersBundleName)
-		{
-			Setting.AutoCollectShaders = isCollectAllShaders;
-			Setting.ShadersBundleName = shadersBundleName;
-			IsDirty = true;
-		}
-		#endregion
 
 		#region 资源分组编辑相关
 		public static void CreatePackage(string packageName)

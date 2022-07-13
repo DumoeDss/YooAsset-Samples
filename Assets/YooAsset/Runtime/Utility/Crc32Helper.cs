@@ -5,8 +5,6 @@ namespace YooAsset
 {
     internal class Crc32Helper
     {
-
-
         public static string CalcHash(string filePath)
         {
             if (!File.Exists(filePath))

@@ -23,7 +23,6 @@ namespace YooAsset.Editor
 		private List<string> _encryptionServicesClassNames;
 
 		private TextField _buildOutputField;
-		private IntegerField _buildVersionField;
 		private EnumField _buildModeField;
 		private TextField _buildinTagsField;
 		private PopupField<string> _encryptionField;
@@ -53,14 +52,6 @@ namespace YooAsset.Editor
 				_buildOutputField = root.Q<TextField>("BuildOutput");
 				_buildOutputField.SetValueWithoutNotify(pipelineOutputDirectory);
 				_buildOutputField.SetEnabled(false);
-
-				// 构建版本
-				_buildVersionField = root.Q<IntegerField>("BuildVersion");
-				_buildVersionField.SetValueWithoutNotify(AssetBundleBuilderSettingData.Setting.BuildVersion);
-				_buildVersionField.RegisterValueChangedCallback(evt =>
-				{
-					AssetBundleBuilderSettingData.Setting.BuildVersion = _buildVersionField.value;
-				});
 
 				// 构建模式
 				_buildModeField = root.Q<EnumField>("BuildMode");
@@ -205,7 +196,6 @@ namespace YooAsset.Editor
 			buildParameters.OutputRoot = defaultOutputRoot;
 			buildParameters.BuildTarget = _buildTarget;
 			buildParameters.BuildMode = buildMode;
-			buildParameters.BuildVersion = _buildVersionField.value;
 			buildParameters.BuildinTags = _buildinTagsField.value;
 			buildParameters.VerifyBuildingResult = true;
 			buildParameters.AppendFileExtension = _appendExtensionToggle.value;
@@ -229,7 +219,6 @@ namespace YooAsset.Editor
 			buildParameters.OutputRoot = defaultOutputRoot;
 			buildParameters.BuildTarget = _buildTarget;
 			buildParameters.BuildMode = buildMode;
-			buildParameters.BuildVersion = _buildVersionField.value;
 			buildParameters.BuildinTags = _buildinTagsField.value;
 			buildParameters.VerifyBuildingResult = true;
 			buildParameters.AppendFileExtension = _appendExtensionToggle.value;
@@ -253,7 +242,6 @@ namespace YooAsset.Editor
 			buildParameters.OutputRoot = defaultOutputRoot;
 			buildParameters.BuildTarget = _buildTarget;
 			buildParameters.BuildMode = buildMode;
-			buildParameters.BuildVersion = _buildVersionField.value;
 			buildParameters.BuildinTags = _buildinTagsField.value;
 			buildParameters.VerifyBuildingResult = true;
 			buildParameters.AppendFileExtension = _appendExtensionToggle.value;

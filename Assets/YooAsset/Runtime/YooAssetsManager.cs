@@ -22,7 +22,7 @@ namespace YooAsset
         InitializeParameters parameters;
 
         /// <summary>
-        /// ÊÇ·ñÒÑ¾­³õÊ¼»¯
+        /// æ˜¯å¦å·²ç»åˆå§‹åŒ–
         /// </summary>
         public bool IsInitialized
         {
@@ -30,7 +30,7 @@ namespace YooAsset
         }
 
         /// <summary>
-        /// Òì²½³õÊ¼»¯
+        /// å¼‚æ­¥åˆå§‹åŒ–
         /// </summary>
         public void InitializeAsync(InitializeParameters parameters)
         {
@@ -48,14 +48,14 @@ namespace YooAsset
 				throw new Exception($"Editor simulate mode only support unity editor.");
 #endif
 
-            // ³õÊ¼»¯Òì²½²Ù×÷ÏµÍ³
+            // åˆå§‹åŒ–å¼‚æ­¥æ“ä½œç³»ç»Ÿ
             OperationSystem.Initialize(parameters.OperationSystemMaxTimeSlice);
 
 #if DEBUG
             gameObject.AddComponent<RemoteDebuggerInRuntime>();
 #endif
 
-            // ¼ì²â²ÎÊı·¶Î§
+            // æ£€æµ‹å‚æ•°èŒƒå›´
             if (parameters.AssetLoadingMaxNumber < 1)
             {
                 parameters.AssetLoadingMaxNumber = 1;
@@ -67,7 +67,7 @@ namespace YooAsset
                 YooLogger.Warning($"{nameof(parameters.OperationSystemMaxTimeSlice)} minimum value is 30 milliseconds");
             }
 
-            // ¼ø¶¨ÔËĞĞÄ£Ê½
+            // é‰´å®šè¿è¡Œæ¨¡å¼
             if (parameters is EditorSimulateModeParameters)
                 _playMode = EPlayMode.EditorSimulateMode;
             else if (parameters is OfflinePlayModeParameters)
@@ -77,7 +77,7 @@ namespace YooAsset
             else
                 throw new NotImplementedException();
 
-            // ³õÊ¼»¯ÏÂÔØÏµÍ³
+            // åˆå§‹åŒ–ä¸‹è½½ç³»ç»Ÿ
             if (_playMode == EPlayMode.HostPlayMode)
             {
 #if UNITY_WEBGL
@@ -107,9 +107,9 @@ namespace YooAsset
         }
 
         /// <summary>
-        /// ¿ªÆôÒ»¸öÒì²½²Ù×÷
+        /// å¼€å¯ä¸€ä¸ªå¼‚æ­¥æ“ä½œ
         /// </summary>
-        /// <param name="operation">Òì²½²Ù×÷¶ÔÏó</param>
+        /// <param name="operation">å¼‚æ­¥æ“ä½œå¯¹è±¡</param>
         public void StartOperaiton(GameAsyncOperation operation)
         {
             OperationSystem.StartOperaiton(operation);

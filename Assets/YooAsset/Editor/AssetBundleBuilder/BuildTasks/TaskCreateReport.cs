@@ -12,12 +12,14 @@ namespace YooAsset.Editor
 		{
 			var buildParameters = context.GetContextObject<AssetBundleBuilder.BuildParametersContext>();
 			var buildMapContext = context.GetContextObject<BuildMapContext>();
+			var createPatchManifestContext = context.GetContextObject<CreatePatchManifestContext>();
+
 			buildParameters.StopWatch();
 
 			var buildMode = buildParameters.Parameters.BuildMode;
 			if (buildMode != EBuildMode.SimulateBuild)
 			{
-				CreateReportFile(buildParameters, buildMapContext);
+				CreateReportFile(buildParameters, buildMapContext, createPatchManifestContext);
 			}
 			else
 			{
@@ -26,9 +28,14 @@ namespace YooAsset.Editor
 			}
 		}
 
-		private void CreateReportFile(AssetBundleBuilder.BuildParametersContext buildParameters, BuildMapContext buildMapContext)
+		private void CreateReportFile(AssetBundleBuilder.BuildParametersContext buildParameters, BuildMapContext buildMapContext, CreatePatchManifestContext createPatchManifestContext)
 		{
-			PatchManifest patchManifest = AssetBundleBuilderHelper.LoadPatchManifestFile(buildParameters.PipelineOutputDirectory, "PatchManifest_" + buildParameters.Parameters.BuildVersion);
+			List<PatchManifest> patchManifests = new List<PatchManifest>();
+            foreach (var item in createPatchManifestContext.PatchManifestPaths)
+            {
+				PatchManifest patchManifest = AssetBundleBuilderHelper.LoadPatchManifestFile(Path.Combine(buildParameters.PipelineOutputDirectory, item));
+				patchManifests.Add(patchManifest);
+			}
 			BuildReport buildReport = new BuildReport();		
 
 			// 概述信息
@@ -42,8 +49,6 @@ namespace YooAsset.Editor
 				buildReport.Summary.BuildinTags = buildParameters.Parameters.BuildinTags;
 				buildReport.Summary.AppendFileExtension = buildParameters.Parameters.AppendFileExtension;
 				buildReport.Summary.CopyBuildinTagFiles = buildParameters.Parameters.CopyBuildinTagFiles;
-				buildReport.Summary.AutoCollectShaders = AssetBundleCollectorSettingData.Setting.AutoCollectShaders;
-				buildReport.Summary.ShadersBundleName = AssetBundleCollectorSettingData.Setting.ShadersBundleName;
 				buildReport.Summary.EncryptionServicesClassName = buildParameters.Parameters.EncryptionServices == null ?
 					"null" : buildParameters.Parameters.EncryptionServices.GetType().FullName;
 
@@ -54,45 +59,52 @@ namespace YooAsset.Editor
 
 				// 构建结果
 				buildReport.Summary.AssetFileTotalCount = buildMapContext.AssetFileCount;
-				buildReport.Summary.AllBundleTotalCount = GetAllBundleCount(patchManifest);
-				buildReport.Summary.AllBundleTotalSize = GetAllBundleSize(patchManifest);
-				buildReport.Summary.BuildinBundleTotalCount = GetBuildinBundleCount(patchManifest);
-				buildReport.Summary.BuildinBundleTotalSize = GetBuildinBundleSize(patchManifest);
-				buildReport.Summary.EncryptedBundleTotalCount = GetEncryptedBundleCount(patchManifest);
-				buildReport.Summary.EncryptedBundleTotalSize = GetEncryptedBundleSize(patchManifest);
-				buildReport.Summary.RawBundleTotalCount = GetRawBundleCount(patchManifest);
-				buildReport.Summary.RawBundleTotalSize = GetRawBundleSize(patchManifest);
+                foreach (var patchManifest in patchManifests)
+                {
+					buildReport.Summary.AllBundleTotalCount += GetAllBundleCount(patchManifest);
+					buildReport.Summary.AllBundleTotalSize += GetAllBundleSize(patchManifest);
+					buildReport.Summary.BuildinBundleTotalCount += GetBuildinBundleCount(patchManifest);
+					buildReport.Summary.BuildinBundleTotalSize += GetBuildinBundleSize(patchManifest);
+					buildReport.Summary.EncryptedBundleTotalCount += GetEncryptedBundleCount(patchManifest);
+					buildReport.Summary.EncryptedBundleTotalSize += GetEncryptedBundleSize(patchManifest);
+					buildReport.Summary.RawBundleTotalCount += GetRawBundleCount(patchManifest);
+					buildReport.Summary.RawBundleTotalSize += GetRawBundleSize(patchManifest);
+				}
 			}
+			buildReport.AssetInfos = new List<ReportAssetInfo>();
+			buildReport.BundleInfos = new List<ReportBundleInfo>();
 
-			// 资源对象列表
-			buildReport.AssetInfos = new List<ReportAssetInfo>(patchManifest.AssetList.Count);
-			foreach (var patchAsset in patchManifest.AssetList)
-			{
-				var mainBundle = patchManifest.BundleList.Find(_ => _.BundleName == patchAsset.BundleID);
-				ReportAssetInfo reportAssetInfo = new ReportAssetInfo();
-				reportAssetInfo.Address = patchAsset.Address;
-				reportAssetInfo.AssetPath = patchAsset.AssetPath;
-				reportAssetInfo.AssetTags = patchAsset.AssetTags;
-				reportAssetInfo.AssetGUID = AssetDatabase.AssetPathToGUID(patchAsset.AssetPath);
-				reportAssetInfo.MainBundleName = mainBundle.BundleName;
-				reportAssetInfo.MainBundleSize = mainBundle.SizeBytes;
-				reportAssetInfo.DependBundles = GetDependBundles(patchManifest, patchAsset);
-				reportAssetInfo.DependAssets = GetDependAssets(buildMapContext, mainBundle.BundleName, patchAsset.AssetPath);
-				buildReport.AssetInfos.Add(reportAssetInfo);
-			}
+			foreach (var patchManifest in patchManifests)
 
-			// 资源包列表
-			buildReport.BundleInfos = new List<ReportBundleInfo>(patchManifest.BundleList.Count);
-			foreach (var patchBundle in patchManifest.BundleList)
-			{
-				ReportBundleInfo reportBundleInfo = new ReportBundleInfo();
-				reportBundleInfo.BundleName = patchBundle.BundleName;
-				reportBundleInfo.Hash = patchBundle.Hash;
-				reportBundleInfo.CRC = patchBundle.CRC;
-				reportBundleInfo.SizeBytes = patchBundle.SizeBytes;
-				reportBundleInfo.Tags = patchBundle.Tags;
-				reportBundleInfo.Flags = patchBundle.Flags;
-				buildReport.BundleInfos.Add(reportBundleInfo);
+            {
+				// 资源对象列表
+				foreach (var patchAsset in patchManifest.AssetList)
+				{
+					var mainBundle = patchManifest.BundleList.Find(_ => _.BundleName == patchAsset.BundleID);
+					ReportAssetInfo reportAssetInfo = new ReportAssetInfo();
+					reportAssetInfo.Address = patchAsset.Address;
+					reportAssetInfo.AssetPath = patchAsset.AssetPath;
+					reportAssetInfo.AssetTags = patchAsset.AssetTags;
+					reportAssetInfo.AssetGUID = AssetDatabase.AssetPathToGUID(patchAsset.AssetPath);
+					reportAssetInfo.MainBundleName = mainBundle.BundleName;
+					reportAssetInfo.MainBundleSize = mainBundle.SizeBytes;
+					reportAssetInfo.DependBundles = GetDependBundles(patchManifest, patchAsset);
+					reportAssetInfo.DependAssets = GetDependAssets(buildMapContext, mainBundle.BundleName, patchAsset.AssetPath);
+					buildReport.AssetInfos.Add(reportAssetInfo);
+				}
+
+				// 资源包列表
+				foreach (var patchBundle in patchManifest.BundleList)
+				{
+					ReportBundleInfo reportBundleInfo = new ReportBundleInfo();
+					reportBundleInfo.BundleName = patchBundle.BundleName;
+					reportBundleInfo.Hash = patchBundle.Hash;
+					reportBundleInfo.CRC = patchBundle.CRC;
+					reportBundleInfo.SizeBytes = patchBundle.SizeBytes;
+					reportBundleInfo.Tags = patchBundle.Tags;
+					reportBundleInfo.Flags = patchBundle.Flags;
+					buildReport.BundleInfos.Add(reportBundleInfo);
+				}
 			}
 
 			// 删除旧文件
@@ -110,13 +122,21 @@ namespace YooAsset.Editor
 		/// </summary>
 		private List<string> GetDependBundles(PatchManifest patchManifest, PatchAsset patchAsset)
 		{
-			List<string> dependBundles = new List<string>(patchAsset.DependIDs.Length);
-			foreach (var dependID in patchAsset.DependIDs)
-			{
-				string dependBundleName = patchManifest.BundleList.Find(_=>_.BundleName == dependID).BundleName;
-				dependBundles.Add(dependBundleName);
+            if (patchAsset.DependIDs != null)
+            {
+				List<string> dependBundles = new List<string>(patchAsset.DependIDs.Length);
+				foreach (var dependID in patchAsset.DependIDs)
+				{
+					var bundle = patchManifest.BundleList.Find(_ => _.BundleName == dependID);
+					if(bundle != null)
+                    {
+						string dependBundleName = bundle.BundleName;
+						dependBundles.Add(dependBundleName);
+					}
+				}
+				return dependBundles;
 			}
-			return dependBundles;
+			return null;
 		}
 
 		/// <summary>

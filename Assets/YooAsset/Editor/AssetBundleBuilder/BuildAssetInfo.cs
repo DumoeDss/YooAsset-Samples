@@ -203,16 +203,6 @@ namespace YooAsset.Editor
 				if (IsRawAsset)
 					throw new Exception("Should never get here !");
 
-				if (AssetBundleCollectorSettingData.Setting.AutoCollectShaders)
-				{
-					if (IsShaderAsset)
-					{
-						string shareBundleName = $"{AssetBundleCollectorSettingData.Setting.ShadersBundleName}";//.{YooAssetSettingsData.Setting.AssetBundleFileVariant}
-						_shareBundleName = EditorTools.GetRegularPath(shareBundleName).ToLower();
-						return;
-					}
-				}
-
 				if(_referenceBundleNames.Count > 0){
 					IPackRule packRule = PackGroup.StaticPackRule;
 					string groupName, bundleName;

@@ -132,6 +132,20 @@ namespace YooAsset.Editor
 		}
 
 		/// <summary>
+		/// 加载补丁清单文件
+		/// </summary>
+		internal static PatchManifest LoadPatchManifestFile(string filePath)
+		{
+			if (File.Exists(filePath) == false)
+			{
+				throw new System.Exception($"Not found patch manifest file : {filePath}");
+			}
+
+			string jsonData = FileUtility.ReadFile(filePath);
+			return PatchManifest.Deserialize(jsonData);
+		}
+
+		/// <summary>
 		/// 获取旧的补丁清单
 		/// </summary>
 		internal static PatchManifest GetOldPatchManifest(string pipelineOutputDirectory,int buildVersion)
