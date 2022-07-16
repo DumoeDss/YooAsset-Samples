@@ -203,7 +203,7 @@ namespace YooAsset
 				}
 				else if (_bundleInfo.LoadMode == BundleInfo.ELoadMode.LoadFromStreaming)
 				{
-					if (DownloadSystem.ContainsVerifyFile(_bundleInfo.Hash))
+					if (DownloadSystem.ContainsVerifyFile(_bundleInfo))
 						_steps = ESteps.CheckAndCopyFile;
 					else
 						_steps = ESteps.DownloadFromApk;
@@ -355,7 +355,7 @@ namespace YooAsset
 				}
 				else if (_bundleInfo.LoadMode == BundleInfo.ELoadMode.LoadFromStreaming)
 				{
-					if (DownloadSystem.ContainsVerifyFile(_bundleInfo.Hash))
+					if (DownloadSystem.ContainsVerifyFile(_bundleInfo))
 						_steps = ESteps.CheckAndCopyFile;
 					else
 						_steps = ESteps.DownloadFromApk;

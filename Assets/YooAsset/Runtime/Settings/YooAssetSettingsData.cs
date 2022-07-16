@@ -2,6 +2,13 @@
 
 namespace YooAsset
 {
+	public class YooAssetVersion
+    {
+		public string crc;
+		public long size;
+		public int version;
+    }
+
 	internal static class YooAssetSettingsData
 	{
 		private static YooAssetSettings _setting = null;
@@ -45,7 +52,7 @@ namespace YooAsset
 		/// </summary>
 		public static string GetPatchManifestFileName(string _manifestName)
 		{
-			return $"{_manifestName}.bytes";
+			return $"{_manifestName}";
 		}
 
 		/// <summary>
@@ -53,7 +60,7 @@ namespace YooAsset
 		/// </summary>
 		public static string GetPatchManifestHashFileName(string _manifestName)
 		{
-			return $"{_manifestName}.hash";
+			return $"{_manifestName}.version";
 		}
 	}
 }

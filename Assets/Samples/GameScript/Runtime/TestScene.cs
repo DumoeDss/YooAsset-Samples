@@ -6,7 +6,7 @@ using YooAsset;
 
 public class TestScene : MonoBehaviour
 {
-	public EPlayMode PlayMode = EPlayMode.EditorSimulateMode;
+	public EPlayMode PlayMode = EPlayMode.HostPlayMode;
 	void Awake()
 	{
 		Application.targetFrameRate = 60;
@@ -21,17 +21,7 @@ public class TestScene : MonoBehaviour
 	{
 		Debug.Log($"资源系统运行模式：{PlayMode}");
 
-		YooAssets = YooAssetsManager.Instance.GetYooAssets("Test");
-
-		// 编辑器模拟模式
-		if (PlayMode == EPlayMode.EditorSimulateMode)
-		{
-			var createParameters = new EditorSimulateModeParameters();
-			createParameters.LocationServices = new AddressLocationServices();
-			YooAssetsManager.Instance.InitializeAsync(createParameters);
-			if (!YooAssets.IsInitialized)
-				yield return YooAssets.InitializeAsync(createParameters, PlayMode);
-		}
+		YooAssets = YooAssetsManager.Instance.GetYooAssets("Art");
 
 		// 单机模式
 		if (PlayMode == EPlayMode.OfflinePlayMode)

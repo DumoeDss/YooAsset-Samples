@@ -6,6 +6,8 @@ namespace YooAsset
 	[Serializable]
 	internal class PatchBundle
 	{
+		public string PackageName;
+
 		/// <summary>
 		/// 资源包名称
 		/// </summary>
@@ -52,10 +54,9 @@ namespace YooAsset
 		/// </summary>
 		public bool IsRawFile { private set; get; }
 
-
-
-		public PatchBundle( string bundleName, string hash, string crc, long sizeBytes, string[] tags)
+		public PatchBundle(string packageName, string bundleName, string hash, string crc, long sizeBytes, string[] tags)
 		{
+			PackageName = packageName;
 			BundleName = bundleName;
 			Hash = hash;
 			CRC = crc;

@@ -55,6 +55,25 @@ namespace YooAsset
 		/// </summary>
 		public System.Type AssetType { private set; get; }
 
+		public bool CheckIsNeedOtherPackage()
+        {
+			if(_patchAsset==null)
+				throw new System.Exception("Should never get here ! _patchAsset is Null");
+			if(_patchAsset.DependIDs!=null&& _patchAsset.DependIDs.Length > 0)
+            {
+                foreach (var item in _patchAsset.DependIDs)
+                {
+                    if (item.Contains("@"))
+                    {
+						return true;
+                    }
+                }
+            }
+
+			return false;
+
+		}
+
 
 		// 注意：这是一个内部类，严格限制外部创建。
 		private AssetInfo()

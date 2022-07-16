@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections;
+using System.Collections.Generic;
 using UnityEngine;
 using YooAsset;
 
@@ -8,7 +9,9 @@ public class BootScene : MonoBehaviour
 	public static BootScene Instance { private set; get; }
 	public static EPlayMode GamePlayMode;
 	public int version;
-	public EPlayMode PlayMode = EPlayMode.EditorSimulateMode;
+	public EPlayMode PlayMode = EPlayMode.HostPlayMode;
+	public string artVersion, dependVersion;
+	public YooAssets YooAssets;
 
 	void Awake()
 	{
@@ -17,7 +20,28 @@ public class BootScene : MonoBehaviour
 		Application.targetFrameRate = 60;
 		Application.runInBackground = true;
 		PatchUpdater.ResourceVersion = version;
+		InitBundleList();
 	}
+
+	public List<PackageVersion> InitBundleList()
+    {
+		var bundles = new List<PackageVersion>();
+
+		bundles.Add(new PackageVersion() { 
+			_name="Art",
+			_version= artVersion
+		});
+
+		bundles.Add(new PackageVersion()
+		{
+			_name = "Dependency",
+			_version = dependVersion
+		});
+
+		YooAssetsManager.Instance.SetBundleList(bundles);
+		return bundles;
+    }
+
 	void OnGUI()
 	{
 		GUIConsole.OnGUI();
@@ -32,21 +56,10 @@ public class BootScene : MonoBehaviour
 		FsmManager.Update();
 	}
 
-	IEnumerator Start()
+	void Start()
 	{
 		GamePlayMode = PlayMode;
 		Debug.Log($"资源系统运行模式：{PlayMode}");
-		var yooAssets = YooAssetsManager.Instance.GetYooAssets("Test");
-		// 编辑器下的模拟模式
-		if (PlayMode == EPlayMode.EditorSimulateMode)
-		{
-			var createParameters = new EditorSimulateModeParameters();
-			createParameters.LocationServices = new AddressLocationServices();
-			//createParameters.SimulatePatchManifestPath = GetPatchManifestPath();
-			YooAssetsManager.Instance.InitializeAsync(createParameters);
-			if (!yooAssets.IsInitialized)
-				yield return yooAssets.InitializeAsync(createParameters, PlayMode);
-		}
 
 		// 单机运行模式
 		if (PlayMode == EPlayMode.OfflinePlayMode)
@@ -54,8 +67,6 @@ public class BootScene : MonoBehaviour
 			var createParameters = new OfflinePlayModeParameters();
 			createParameters.LocationServices = new AddressLocationServices();
 			YooAssetsManager.Instance.InitializeAsync(createParameters);
-			if (!yooAssets.IsInitialized)
-				yield return yooAssets.InitializeAsync(createParameters, PlayMode);
 		}
 
 		// 联机运行模式
@@ -69,42 +80,42 @@ public class BootScene : MonoBehaviour
 			createParameters.FallbackHostServer = GetHostServerURL();
 			createParameters.VerifyLevel = EVerifyLevel.High;
 			YooAssetsManager.Instance.InitializeAsync(createParameters);
-			if (!yooAssets.IsInitialized)
-				yield return yooAssets.InitializeAsync(createParameters, PlayMode);
 		}
 
+		Init();
+	}
+	
+	async void Init()
+    {
+		YooAssets = await YooAssetsManager.Instance.GetYooAssetsAsync("Art");
 		// 运行补丁流程
 		PatchUpdater.Run();
 	}
 
-	private string GetPatchManifestPath()
-	{
-		string directory = System.IO.Path.GetDirectoryName(Application.dataPath);
-		return $"{directory}/Bundles/StandaloneWindows64/UnityManifest_SimulateBuild/PatchManifest_100.bytes";
-	}
+
 	public string hostServerIP = "http://192.168.53.154:1024";
 	private string GetHostServerURL()
 	{
-		string gameVersion = "100";
+		string gameVersion = version+"";
 
-#if UNITY_EDITOR
+#if UNITY_EDITOR 
 		if (UnityEditor.EditorUserBuildSettings.activeBuildTarget == UnityEditor.BuildTarget.Android)
-			return $"{hostServerIP}/CDN/Android/{gameVersion}";
+			return $"{hostServerIP}/Android/{gameVersion}";
 		else if (UnityEditor.EditorUserBuildSettings.activeBuildTarget == UnityEditor.BuildTarget.iOS)
-			return $"{hostServerIP}/CDN/IPhone/{gameVersion}";
+			return $"{hostServerIP}/iOS/{gameVersion}";
 		else if (UnityEditor.EditorUserBuildSettings.activeBuildTarget == UnityEditor.BuildTarget.WebGL)
-			return $"{hostServerIP}/CDN/WebGL/{gameVersion}";
+			return $"{hostServerIP}/WebGL/{gameVersion}";
 		else
 			return $"{hostServerIP}/StandaloneWindows64/{gameVersion}";
 #else
 		if (Application.platform == RuntimePlatform.Android)
-			return $"{hostServerIP}/CDN/Android/{gameVersion}";
+			return $"{hostServerIP}/Android/{gameVersion}";
 		else if (Application.platform == RuntimePlatform.IPhonePlayer)
-			return $"{hostServerIP}/CDN/IPhone/{gameVersion}";
+			return $"{hostServerIP}/iOS/{gameVersion}";
 		else if (Application.platform == RuntimePlatform.WebGLPlayer)
-			return $"{hostServerIP}/CDN/WebGL/{gameVersion}";
+			return $"{hostServerIP}/WebGL/{gameVersion}";
 		else
-			return $"{hostServerIP}/CDN/PC/{gameVersion}";
+			return $"{hostServerIP}/StandaloneWindows64/{gameVersion}";
 #endif
 	}
 }

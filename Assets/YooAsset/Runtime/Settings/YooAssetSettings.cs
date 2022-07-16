@@ -18,7 +18,7 @@ namespace YooAsset
 		/// <summary>
 		/// 构建输出的补丁清单文件名称
 		/// </summary>
-		public string PatchManifestFileName = "PatchManifest";
+		public string PatchManifestFileName = "Manifest";
 
 		/// <summary>
 		/// 构建输出的Unity清单文件名称

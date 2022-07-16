@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.IO;
 using System.Threading;
+using UnityEngine;
 
 namespace YooAsset
 {
@@ -113,8 +114,10 @@ namespace YooAsset
 					string webManifestHash = _downloader1.GetText();
 					string cachedManifestHash = GetSandboxPatchManifestFileHash(_manifestName);
 
+					YooAssetVersion version = JsonUtility.FromJson<YooAssetVersion>(webManifestHash);
+
 					// 如果补丁清单文件的哈希值相同
-					if (cachedManifestHash == webManifestHash)
+					if (cachedManifestHash == version.crc)
 					{
 						YooLogger.Log($"Patch manifest file hash is not change : {webManifestHash}");
 						LoadSandboxPatchManifest(_manifestName);
@@ -244,7 +247,7 @@ namespace YooAsset
 		{
 			string filePath = PathHelper.MakePersistentLoadPath(YooAssetSettingsData.GetPatchManifestFileName(_manifestName));
 			if (File.Exists(filePath))
-				return HashUtility.FileMD5(filePath);
+				return HashUtility.FileCRC32(filePath);//HashUtility.FileMD5(filePath);
 			else
 				return string.Empty;
 		}
@@ -276,19 +279,19 @@ namespace YooAsset
 			foreach (var patchBundle in _impl.LocalPatchManifest.BundleList)
 			{
 				// 忽略缓存文件
-				if (DownloadSystem.ContainsVerifyFile(patchBundle.Hash))
+				if (DownloadSystem.ContainsVerifyFile(patchBundle))
 					continue;
 
 				// 忽略APP资源
 				// 注意：如果是APP资源并且哈希值相同，则不需要下载
-				if (_impl.AppPatchManifest.Bundles.TryGetValue(patchBundle.BundleName, out PatchBundle appPatchBundle))
+				if (_impl.AppPatchManifest.BundleDic.TryGetValue(patchBundle.BundleName, out PatchBundle appPatchBundle))
 				{
 					if (appPatchBundle.IsBuildin && appPatchBundle.Hash == patchBundle.Hash)
 						continue;
 				}
 
 				// 查看文件是否存在
-				string filePath = SandboxHelper.MakeCacheFilePath(patchBundle.Hash);
+				string filePath = SandboxHelper.MakeCacheFilePath($"{patchBundle.PackageName}/{patchBundle.BundleName}_{patchBundle.Hash}");
 				if (File.Exists(filePath) == false)
 					continue;
 
@@ -333,7 +336,7 @@ namespace YooAsset
 		}
 		private bool RunThread(PatchBundle patchBundle)
 		{
-			string filePath = SandboxHelper.MakeCacheFilePath(patchBundle.Hash);
+			string filePath = SandboxHelper.MakeCacheFilePath($"{patchBundle.PackageName}/{patchBundle.BundleName}_{patchBundle.Hash}");
 			ThreadInfo info = new ThreadInfo(filePath, patchBundle);
 			return ThreadPool.QueueUserWorkItem(new WaitCallback(VerifyInThread), info);
 		}

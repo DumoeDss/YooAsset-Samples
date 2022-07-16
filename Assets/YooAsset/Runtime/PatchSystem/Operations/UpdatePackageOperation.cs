@@ -198,12 +198,12 @@ namespace YooAsset
 			foreach (var patchBundle in _remotePatchManifest.BundleList)
 			{
 				// 忽略缓存文件
-				if (DownloadSystem.ContainsVerifyFile(patchBundle.Hash))
+				if (DownloadSystem.ContainsVerifyFile(patchBundle))
 					continue;
 
 				// 忽略APP资源
 				// 注意：如果是APP资源并且哈希值相同，则不需要下载
-				if (_impl.AppPatchManifest.Bundles.TryGetValue(patchBundle.BundleName, out PatchBundle appPatchBundle))
+				if (_impl.AppPatchManifest.BundleDic.TryGetValue(patchBundle.BundleName, out PatchBundle appPatchBundle))
 				{
 					if (appPatchBundle.IsBuildin && appPatchBundle.Hash == patchBundle.Hash)
 						continue;

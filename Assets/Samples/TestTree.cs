@@ -29,6 +29,19 @@ public class TestTree : MonoBehaviour
 			Leaves = new List<LeaveData>();
 		}
 
+		public LeaveData ( LeaveData leaveData)
+        {
+			Name = leaveData.Name;
+			Leaves = new List<LeaveData>();
+			allLevel = leaveData.allLevel;
+			if(leaveData.Leaves!=null&& leaveData.Leaves.Count>0)
+            foreach (var item in leaveData.Leaves)
+            {
+				Leaves.Add(new LeaveData(item));
+
+			}
+		}
+
 		public LeaveData(RawData rawData)
 		{
 			Name = rawData.Name;
@@ -108,7 +121,15 @@ public class TestTree : MonoBehaviour
 			return result;
 		}
 
-		public void UpdateName(LeaveData leaveData, int num)
+		public void UpdateName(List<LeaveData> leaveData, int num)
+        {
+            foreach (var item in leaveData)
+            {
+				UpdateName(item,num);
+			}
+        }
+
+		public void UpdateName(LeaveData leaveData, int num, bool inverse = false)
 		{
             if (string.IsNullOrEmpty(leaveData.allLevel))
             {
@@ -119,15 +140,17 @@ public class TestTree : MonoBehaviour
 				leaveData.allLevel = $"-{num + 1}{leaveData.allLevel}";
 			}
 			if (leaveData.Leaves != null)
-			{
-				foreach (var leave in leaveData.Leaves)
-				{
-					if(leave.Leaves!=null&& leave.Leaves.Count > 0)
-						UpdateName(leave, num);
-				}
-			}
-		}
-		
+            {
+				//UpdateName(leaveData.Leaves,num);
+
+				//foreach (var leave in leaveData.Leaves)
+    //            {
+    //                if(leave.Leaves!=null&& leave.Leaves.Count > 0)
+    //                UpdateName(leave, num);
+    //            }
+            }
+        }
+
 		public void LoadData(string dataPath)
 		{
 			var datas = ReadAllLines(dataPath);
@@ -145,31 +168,21 @@ public class TestTree : MonoBehaviour
 						var leave = new LeaveData(rawDatas[i]);
 						if (lastLeaves != null && lastLeaves.Count > 0)
 						{
-							leave.Leaves = new List<LeaveData>(lastLeaves);
-						}
-						for (int k = 0; k < leave.Leaves.Count; k++)
-						{
-							UpdateName(leave.Leaves[k], j);
-						}
-						leaves.Add(leave);
-					}
-					lastLeaves = leaves;
-				}
-				else if (i == rawDatas.Count - 1)
-				{
-					List<LeaveData> leaves = new List<LeaveData>();
-					for (int j = 0; j < rawDatas[i-1].Num; j++)
-					{
-						var leave = new LeaveData(rawDatas[i]);
-						if (lastLeaves != null && lastLeaves.Count > 0)
-						{
-							leave.Leaves = new List<LeaveData>(lastLeaves);
+							leave.Leaves = new List<LeaveData>();
+                            foreach (var item in lastLeaves)
+                            {
+								leave.Leaves.Add(new LeaveData(item));
+							}
 						}
 						UpdateName(leave, j);
+                        for (int k = 0; k < leave.Leaves.Count; k++)
+                        {
+                            UpdateName(leave.Leaves[k], k,true);
+							UpdateName(leave.Leaves[k], j, true);
+						}
 						leaves.Add(leave);
 					}
 					lastLeaves = leaves;
-
 				}
 				else
 				{
@@ -181,7 +194,7 @@ public class TestTree : MonoBehaviour
 				}
 			}
 
-           Debug.Log(Tree.ToString());
+			Debug.Log(Tree.ToString());
 		}
 
 	}

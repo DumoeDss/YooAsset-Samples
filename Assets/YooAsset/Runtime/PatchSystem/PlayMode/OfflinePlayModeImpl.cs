@@ -40,7 +40,7 @@ namespace YooAsset
 		#region IBundleServices接口
 		private BundleInfo CreateBundleInfo(string bundleName)
 		{
-			if (_appPatchManifest.Bundles.TryGetValue(bundleName, out PatchBundle patchBundle))
+			if (_appPatchManifest.BundleDic.TryGetValue(bundleName, out PatchBundle patchBundle))
 			{
 				BundleInfo bundleInfo = new BundleInfo(patchBundle, BundleInfo.ELoadMode.LoadFromStreaming);
 				return bundleInfo;
@@ -58,6 +58,16 @@ namespace YooAsset
 			string bundleName = _appPatchManifest.GetBundleName(assetInfo.AssetPath);
 			return CreateBundleInfo(bundleName);
 		}
+
+		string[] IBundleServices.GetOtherPackageDependBundleInfos(AssetInfo assetInfo)
+		{
+			if (assetInfo.IsInvalid)
+				throw new Exception("Should never get here !");
+
+			var depends = _appPatchManifest.GetOtherPackageDependencies(assetInfo.AssetPath);
+			return depends;
+		}
+
 		BundleInfo[] IBundleServices.GetAllDependBundleInfos(AssetInfo assetInfo)
 		{
 			if (assetInfo.IsInvalid)
@@ -78,7 +88,7 @@ namespace YooAsset
 		}
 		PatchAsset IBundleServices.TryGetPatchAsset(string assetPath)
 		{
-			if (_appPatchManifest.Assets.TryGetValue(assetPath, out PatchAsset patchAsset))
+			if (_appPatchManifest.AssetDic.TryGetValue(assetPath, out PatchAsset patchAsset))
 				return patchAsset;
 			else
 				return null;
@@ -87,6 +97,11 @@ namespace YooAsset
 		{
 			return _appPatchManifest.MappingToAssetPath(location);
 		}
-		#endregion
-	}
+
+        public BundleInfo GetBundleInfo(string bundleName)
+        {
+			return CreateBundleInfo(bundleName); 
+		}
+        #endregion
+    }
 }

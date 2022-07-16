@@ -4,6 +4,8 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine.SceneManagement;
 using UnityEngine;
+using System.Threading.Tasks;
+using Cysharp.Threading.Tasks;
 
 namespace YooAsset
 {
@@ -15,7 +17,6 @@ namespace YooAsset
         private EPlayMode _playMode;
         private IBundleServices _bundleServices;
         private ILocationServices _locationServices;
-        private EditorSimulateModeImpl _editorSimulateModeImpl;
         private OfflinePlayModeImpl _offlinePlayModeImpl;
         private HostPlayModeImpl _hostPlayModeImpl;
 
@@ -43,11 +44,6 @@ namespace YooAsset
                 _locationServices = parameters.LocationServices;
             this.parameters = parameters;
 
-#if !UNITY_EDITOR
-			if (parameters is EditorSimulateModeParameters)
-				throw new Exception($"Editor simulate mode only support unity editor.");
-#endif
-
             // 初始化异步操作系统
             OperationSystem.Initialize(parameters.OperationSystemMaxTimeSlice);
 
@@ -68,9 +64,7 @@ namespace YooAsset
             }
 
             // 鉴定运行模式
-            if (parameters is EditorSimulateModeParameters)
-                _playMode = EPlayMode.EditorSimulateMode;
-            else if (parameters is OfflinePlayModeParameters)
+            if (parameters is OfflinePlayModeParameters)
                 _playMode = EPlayMode.OfflinePlayMode;
             else if (parameters is HostPlayModeParameters)
                 _playMode = EPlayMode.HostPlayMode;
@@ -87,8 +81,19 @@ namespace YooAsset
                 DownloadSystem.Initialize(hostPlayModeParameters.BreakpointResumeFileSize, hostPlayModeParameters.VerifyLevel);
 #endif
             }
+        }
+        List<PackageVersion> packageVersions;
 
+        Dictionary<string, string> packageVersionsDic;
 
+        public void SetBundleList(List<PackageVersion> packageVersions)
+        {
+            this.packageVersions = packageVersions;
+            packageVersionsDic = new Dictionary<string, string>();
+            foreach (var packageVersion in packageVersions)
+            {
+                packageVersionsDic[packageVersion._name] = packageVersion._version;
+            }
         }
 
         Dictionary<string, YooAssets> yooAssetsDic;
@@ -101,10 +106,44 @@ namespace YooAsset
             {
                 return yooAssetsDic[name];
             }
-            YooAssets yooAssets = new YooAssets();
+            if (!packageVersionsDic.ContainsKey(name))
+            {
+                throw new Exception($"未查询到package： {name} 的版本");
+
+            }
+            YooAssets yooAssets = new YooAssets(name, packageVersionsDic[name]);
+            yooAssets.InitializeAsync(parameters, _playMode);
             yooAssetsDic.Add(name, yooAssets);
             return yooAssets;
         }
+        public async UniTask<YooAssets> GetYooAssetsAsync(string name)
+        {
+            if (yooAssetsDic == null)
+                yooAssetsDic = new Dictionary<string, YooAssets>();
+            if (yooAssetsDic.ContainsKey(name))
+            {
+                return yooAssetsDic[name];
+            }
+            if (!packageVersionsDic.ContainsKey(name))
+            {
+				throw new Exception($"未查询到package： {name} 的版本");
+
+            }
+
+            YooAssets yooAssets = new YooAssets(name, packageVersionsDic[name]);
+            await yooAssets.InitializeAsync(parameters, _playMode);
+            yooAssetsDic.Add(name, yooAssets);
+            return yooAssets;
+        }
+
+        internal async UniTask<List<AssetBundleLoaderBase>> GetBundleLoader(string pakcage, List<string> bundles)
+        {
+            YooAssets yooAssets = await GetYooAssetsAsync(pakcage);
+            await yooAssets.UpdateManifestAsync();
+            await yooAssets.UpdatePackageAsync();
+            return yooAssets.CreateBundleDownloader(bundles.ToArray());
+        }
+
 
         /// <summary>
         /// 开启一个异步操作
@@ -119,6 +158,7 @@ namespace YooAsset
         {
             OperationSystem.Update();
             DownloadSystem.Update();
+            if(yooAssetsDic!=null)
             foreach (var item in yooAssetsDic)
             {
                 if(item.Value != null && item.Value.IsInitialized)
@@ -136,7 +176,6 @@ namespace YooAsset
 
             _bundleServices = null;
             _locationServices = null;
-            _editorSimulateModeImpl = null;
             _offlinePlayModeImpl = null;
             _hostPlayModeImpl = null;
 

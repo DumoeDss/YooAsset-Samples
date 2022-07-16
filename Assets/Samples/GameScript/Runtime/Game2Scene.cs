@@ -14,7 +14,7 @@ public class Game2Scene : MonoBehaviour
 	YooAssets YooAssets;
 	void Start()
 	{
-		YooAssets = YooAssetsManager.Instance.GetYooAssets("Test");
+		YooAssets = YooAssetsManager.Instance.GetYooAssets("Art");
 
 		YooAssets.UnloadUnusedAssets();
 

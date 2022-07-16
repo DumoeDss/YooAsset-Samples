@@ -279,6 +279,25 @@ namespace YooAsset
 			}
 			return result;
 		}
+
+		internal List<AssetBundleLoaderBase> CreateDependAssetBundleLoaders(string[] bundles)
+		{
+			List<AssetBundleLoaderBase> result = new List<AssetBundleLoaderBase>(bundles.Length);
+			foreach (var bundle in bundles)
+            {
+				BundleInfo bundleInfo = BundleServices.GetBundleInfo(bundle);
+				AssetBundleLoaderBase dependLoader = CreateAssetBundleLoaderInternal(bundleInfo);
+				result.Add(dependLoader);
+			}
+			return result;
+		}
+
+		internal string[] CreateOtherPackageDependAssetBundleLoaders(AssetInfo assetInfo)
+		{
+			var depends = BundleServices.GetOtherPackageDependBundleInfos(assetInfo);
+			return depends;
+		}
+
 		internal  void RemoveBundleProviders(List<ProviderBase> providers)
 		{
 			foreach (var provider in providers)

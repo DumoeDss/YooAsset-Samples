@@ -13,6 +13,13 @@ namespace YooAsset
 		/// </summary>
 		BundleInfo[] GetAllDependBundleInfos(AssetInfo assetPath);
 
+		BundleInfo GetBundleInfo(string bundleName);
+
+		/// <summary>
+		/// 获取依赖的资源包信息集合
+		/// </summary>
+		string[] GetOtherPackageDependBundleInfos(AssetInfo assetPath);
+
 		/// <summary>
 		/// 获取资源信息列表
 		/// </summary>

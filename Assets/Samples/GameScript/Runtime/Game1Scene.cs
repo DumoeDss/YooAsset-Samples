@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Cysharp.Threading.Tasks;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -17,7 +18,7 @@ public class Game1Scene : MonoBehaviour
 
 	void Start()
 	{
-		YooAssets= YooAssetsManager.Instance.GetYooAssets("Test");
+		YooAssets= YooAssetsManager.Instance.GetYooAssets("Art");
 		YooAssets.UnloadUnusedAssets();
 
 		// 初始化窗口
@@ -51,9 +52,7 @@ public class Game1Scene : MonoBehaviour
 		resVersion.text = $"资源版本 : {YooAssets.GetResourceVersion()}";
 
 		var playMode = CanvasRoot.transform.Find("play_mode/label").GetComponent<Text>();
-		if (BootScene.GamePlayMode == EPlayMode.EditorSimulateMode)
-			playMode.text = "编辑器下模拟模式";
-		else if (BootScene.GamePlayMode == EPlayMode.OfflinePlayMode)
+		if (BootScene.GamePlayMode == EPlayMode.OfflinePlayMode)
 			playMode.text = "离线运行模式";
 		else if (BootScene.GamePlayMode == EPlayMode.HostPlayMode)
 			playMode.text = "网络运行模式";
@@ -84,7 +83,7 @@ public class Game1Scene : MonoBehaviour
 #else
 		{
 			var rawImage = CanvasRoot.transform.Find("background").GetComponent<RawImage>();
-			AssetOperationHandle handle = YooAssets.LoadAssetSync<Texture>("Texture/bg");
+			AssetOperationHandle handle = YooAssets.LoadAssetSync<Texture>("Texture/bg.png");
 			_cachedAssetOperationHandles.Add(handle);
 			rawImage.texture = handle.AssetObject as Texture;
 		}
@@ -114,14 +113,14 @@ public class Game1Scene : MonoBehaviour
 		{
 			string[] entityAssetNames =
 			{
-				"Level1/footman_Blue",
-				"Level2/footman_Green",
-				"Level3/footman_Red",
-				"Level3/footman_Yellow"
+				"footman_Blue.prefab",
+				"footman_Green.prefab",
+				"level3/footman_Red.prefab",
+				"level3/footman_Yellow.prefab"
 			};
 
 			var btn = CanvasRoot.transform.Find("load_npc/btn").GetComponent<Button>();
-			btn.onClick.AddListener(() =>
+			btn.onClick.AddListener(async () =>
 			{
 #if UNITY_WEBGL
 				var icon = CanvasRoot.transform.Find("load_npc/icon").GetComponent<Image>();
@@ -136,8 +135,9 @@ public class Game1Scene : MonoBehaviour
 				};
 #else
 				var icon = CanvasRoot.transform.Find("load_npc/icon").GetComponent<Image>();		
-				AssetOperationHandle handle = YooAssets.LoadAssetSync<GameObject>($"Entity/{entityAssetNames[_npcIndex]}");
+				var handle = YooAssets.LoadAssetAsync<GameObject>($"{entityAssetNames[_npcIndex]}");
 				_cachedAssetOperationHandles.Add(handle);
+				await (handle.ToUniTask());
 				GameObject go = handle.InstantiateSync(icon.transform);
 				go.transform.localPosition = new Vector3(0, -50, -100);
 				go.transform.localRotation = Quaternion.EulerAngles(0, 180, 0);
@@ -177,7 +177,7 @@ public class Game1Scene : MonoBehaviour
 			btn.onClick.AddListener(() =>
 			{
 				string savePath = $"{YooAssets.GetSandboxRoot()}/config1.txt";
-				RawFileOperation operation = YooAssets.GetRawFileAsync("Config/config1.txt", savePath);
+				RawFileOperation operation = YooAssets.GetRawFileAsync("config/config1.txt", savePath);
 				operation.Completed += OnRawFile_Completed;
 			});
 		}
@@ -218,7 +218,7 @@ public class Game1Scene : MonoBehaviour
 		// 加载背景音乐
 		{
 			var audioSource = CanvasRoot.transform.Find("music").GetComponent<AudioSource>();
-			AssetOperationHandle handle = YooAssets.LoadAssetAsync<AudioClip>("Music/town");
+			AssetOperationHandle handle = YooAssets.LoadAssetAsync<AudioClip>("music/town.wav");
 			_cachedAssetOperationHandles.Add(handle);
 			await handle.Task;
 			audioSource.clip = handle.AssetObject as AudioClip;

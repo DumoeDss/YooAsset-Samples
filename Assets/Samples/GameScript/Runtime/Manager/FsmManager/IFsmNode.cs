@@ -7,7 +7,6 @@ public interface IFsmNode
 	/// 节点名称
 	/// </summary>
 	string Name { get; }
-	YooAssets YooAssets { get;  }
 	void OnEnter();
 	void OnUpdate();
 	void OnExit();

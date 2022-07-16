@@ -82,7 +82,7 @@ namespace YooAsset
 				bool used = false;
 				foreach (var patchBundle in LocalPatchManifest.BundleList)
 				{
-					if (fileInfo.Name == patchBundle.Hash)
+					if (fileInfo.Name == $"{patchBundle.BundleName}_{patchBundle.Hash}")
 					{
 						used = true;
 						break;
@@ -111,12 +111,12 @@ namespace YooAsset
 			foreach (var patchBundle in LocalPatchManifest.BundleList)
 			{
 				// 忽略缓存文件
-				if (DownloadSystem.ContainsVerifyFile(patchBundle.Hash))
+				if (DownloadSystem.ContainsVerifyFile(patchBundle))
 					continue;
 
 				// 忽略APP资源
 				// 注意：如果是APP资源并且哈希值相同，则不需要下载
-				if (AppPatchManifest.Bundles.TryGetValue(patchBundle.BundleName, out PatchBundle appPatchBundle))
+				if (AppPatchManifest.BundleDic.TryGetValue(patchBundle.BundleName, out PatchBundle appPatchBundle))
 				{
 					if (appPatchBundle.IsBuildin && appPatchBundle.Hash == patchBundle.Hash)
 						continue;
@@ -143,12 +143,12 @@ namespace YooAsset
 			foreach (var patchBundle in LocalPatchManifest.BundleList)
 			{
 				// 忽略缓存文件
-				if (DownloadSystem.ContainsVerifyFile(patchBundle.Hash))
+				if (DownloadSystem.ContainsVerifyFile(patchBundle))
 					continue;
 
 				// 忽略APP资源
 				// 注意：如果是APP资源并且哈希值相同，则不需要下载
-				if (AppPatchManifest.Bundles.TryGetValue(patchBundle.BundleName, out PatchBundle appPatchBundle))
+				if (AppPatchManifest.BundleDic.TryGetValue(patchBundle.BundleName, out PatchBundle appPatchBundle))
 				{
 					if (appPatchBundle.IsBuildin && appPatchBundle.Hash == patchBundle.Hash)
 						continue;
@@ -196,7 +196,7 @@ namespace YooAsset
 				}
 
 				string mainBundleName = LocalPatchManifest.GetBundleName(assetInfo.AssetPath);
-				if (LocalPatchManifest.Bundles.TryGetValue(mainBundleName, out PatchBundle mainBundle))
+				if (LocalPatchManifest.BundleDic.TryGetValue(mainBundleName, out PatchBundle mainBundle))
 				{
 					if (checkList.Contains(mainBundle) == false)
 						checkList.Add(mainBundle);
@@ -205,7 +205,7 @@ namespace YooAsset
 				string[] dependBundleNames = LocalPatchManifest.GetAllDependencies(assetInfo.AssetPath);
 				foreach (var dependBundleName in dependBundleNames)
 				{
-					if (LocalPatchManifest.Bundles.TryGetValue(dependBundleName, out PatchBundle dependBundle))
+					if (LocalPatchManifest.BundleDic.TryGetValue(dependBundleName, out PatchBundle dependBundle))
 					{
 						if (checkList.Contains(dependBundle) == false)
 							checkList.Add(dependBundle);
@@ -217,12 +217,12 @@ namespace YooAsset
 			foreach (var patchBundle in checkList)
 			{
 				// 忽略缓存文件
-				if (DownloadSystem.ContainsVerifyFile(patchBundle.Hash))
+				if (DownloadSystem.ContainsVerifyFile(patchBundle))
 					continue;
 
 				// 忽略APP资源
 				// 注意：如果是APP资源并且哈希值相同，则不需要下载
-				if (AppPatchManifest.Bundles.TryGetValue(patchBundle.BundleName, out PatchBundle appPatchBundle))
+				if (AppPatchManifest.BundleDic.TryGetValue(patchBundle.BundleName, out PatchBundle appPatchBundle))
 				{
 					if (appPatchBundle.IsBuildin && appPatchBundle.Hash == patchBundle.Hash)
 						continue;
@@ -253,7 +253,7 @@ namespace YooAsset
 					continue;
 
 				// 忽略缓存文件
-				if (DownloadSystem.ContainsVerifyFile(patchBundle.Hash))
+				if (DownloadSystem.ContainsVerifyFile(patchBundle))
 					continue;
 
 				// 查询DLC资源
@@ -285,7 +285,7 @@ namespace YooAsset
 					continue;
 
 				// 忽略缓存文件
-				if (DownloadSystem.ContainsVerifyFile(patchBundle.Hash))
+				if (DownloadSystem.ContainsVerifyFile(patchBundle))
 					continue;
 
 				downloadList.Add(patchBundle);
@@ -318,8 +318,8 @@ namespace YooAsset
 		public BundleInfo ConvertToDownloadInfo(PatchBundle patchBundle)
 		{
 			// 注意：资源版本号只用于确定下载路径
-			string remoteMainURL = GetPatchDownloadMainURL(patchBundle.Hash);
-			string remoteFallbackURL = GetPatchDownloadFallbackURL(patchBundle.Hash);
+			string remoteMainURL = GetPatchDownloadMainURL($"{patchBundle.PackageName}/{patchBundle.BundleName}_{patchBundle.Hash}");
+			string remoteFallbackURL = GetPatchDownloadFallbackURL($"{patchBundle.PackageName}/{patchBundle.BundleName}_{patchBundle.Hash}");
 			BundleInfo bundleInfo = new BundleInfo(patchBundle, BundleInfo.ELoadMode.LoadFromRemote, remoteMainURL, remoteFallbackURL);
 			return bundleInfo;
 		}
@@ -338,7 +338,7 @@ namespace YooAsset
 		public BundleInfo ConvertToUnpackInfo(PatchBundle patchBundle)
 		{
 			// 注意：我们把流加载路径指定为远端下载地址
-			string streamingPath = PathHelper.MakeStreamingLoadPath(patchBundle.Hash);
+			string streamingPath = PathHelper.MakeStreamingLoadPath($"{patchBundle.PackageName}/{patchBundle.BundleName}_{patchBundle.Hash}");
 			streamingPath = PathHelper.ConvertToWWWPath(streamingPath);
 			BundleInfo bundleInfo = new BundleInfo(patchBundle, BundleInfo.ELoadMode.LoadFromRemote, streamingPath, streamingPath);
 			return bundleInfo;
@@ -356,19 +356,22 @@ namespace YooAsset
 		}
 
 		#region IBundleServices接口
+
+
+
 		private BundleInfo CreateBundleInfo(string bundleName)
 		{
-			if (LocalPatchManifest.Bundles.TryGetValue(bundleName, out PatchBundle patchBundle))
+			if (LocalPatchManifest.BundleDic.TryGetValue(bundleName, out PatchBundle patchBundle))
 			{
 				// 查询沙盒资源				
-				if (DownloadSystem.ContainsVerifyFile(patchBundle.Hash))
+				if (DownloadSystem.ContainsVerifyFile(patchBundle))
 				{
 					BundleInfo bundleInfo = new BundleInfo(patchBundle, BundleInfo.ELoadMode.LoadFromCache);
 					return bundleInfo;
 				}
 
 				// 查询APP资源
-				if (AppPatchManifest.Bundles.TryGetValue(bundleName, out PatchBundle appPatchBundle))
+				if (AppPatchManifest.BundleDic.TryGetValue(bundleName, out PatchBundle appPatchBundle))
 				{
 					if (appPatchBundle.IsBuildin && appPatchBundle.Hash == patchBundle.Hash)
 					{
@@ -393,6 +396,16 @@ namespace YooAsset
 			string bundleName = LocalPatchManifest.GetBundleName(assetInfo.AssetPath);
 			return CreateBundleInfo(bundleName);
 		}
+
+		string[] IBundleServices.GetOtherPackageDependBundleInfos(AssetInfo assetInfo)
+        {
+			if (assetInfo.IsInvalid)
+				throw new Exception("Should never get here !");
+
+			var depends = LocalPatchManifest.GetOtherPackageDependencies(assetInfo.AssetPath);
+			return depends;
+		}
+
 		BundleInfo[] IBundleServices.GetAllDependBundleInfos(AssetInfo assetInfo)
 		{
 			if (assetInfo.IsInvalid)
@@ -413,7 +426,7 @@ namespace YooAsset
 		}
 		PatchAsset IBundleServices.TryGetPatchAsset(string assetPath)
 		{
-			if (LocalPatchManifest.Assets.TryGetValue(assetPath, out PatchAsset patchAsset))
+			if (LocalPatchManifest.AssetDic.TryGetValue(assetPath, out PatchAsset patchAsset))
 				return patchAsset;
 			else
 				return null;
@@ -422,6 +435,11 @@ namespace YooAsset
 		{
 			return LocalPatchManifest.MappingToAssetPath(location);
 		}
-		#endregion
-	}
+
+        public BundleInfo GetBundleInfo(string bundleName)
+        {
+			return CreateBundleInfo(bundleName);
+		}
+        #endregion
+    }
 }

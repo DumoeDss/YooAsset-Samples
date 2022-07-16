@@ -66,16 +66,16 @@ namespace YooAsset.Editor
 					EditorTools.CopyFile(sourcePath, destPath, true);
 				}
 
-				//// 拷贝补丁清单哈希文件
-				//{
-				//	string sourcePath = $"{buildParameters.PipelineOutputDirectory}/{PatchManifestPath}.ver";
-				//	string destPath = $"{dir}/{PatchManifestPath}.ver";
-				//	EditorTools.CopyFile(sourcePath, destPath, true);
-				//}
+                // 拷贝补丁清单哈希文件
+                {
+                    string sourcePath = $"{buildParameters.PipelineOutputDirectory}/{PatchManifestPath}.version";
+                    string destPath = $"{dir}/{PatchManifestPath}.version";
+                    EditorTools.CopyFile(sourcePath, destPath, true);
+                }
 
 
-				// 拷贝所有补丁文件
-				int progressValue = 0;
+                // 拷贝所有补丁文件
+                int progressValue = 0;
 				PatchManifest patchManifest = AssetBundleBuilderHelper.LoadPatchManifestFile($"{ dir}/{ PatchManifestPath}");
 				int patchFileTotalCount = patchManifest.BundleList.Count;
 				foreach (var patchBundle in patchManifest.BundleList)

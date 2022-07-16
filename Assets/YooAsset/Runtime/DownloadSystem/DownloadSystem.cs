@@ -73,14 +73,15 @@ namespace YooAsset
 		/// </summary>
 		public static DownloaderBase BeginDownload(BundleInfo bundleInfo, int failedTryAgain, int timeout = 60)
 		{
+			var name = $"{bundleInfo.BundleName}_{bundleInfo.Hash}";
 			// 查询存在的下载器
-			if (_downloaderDic.TryGetValue(bundleInfo.Hash, out var downloader))
+			if (_downloaderDic.TryGetValue(name, out var downloader))
 			{
 				return downloader;
 			}
 
 			// 如果资源已经缓存
-			if (ContainsVerifyFile(bundleInfo.Hash))
+			if (ContainsVerifyFile(bundleInfo))
 			{
 				var tempDownloader = new TempDownloader(bundleInfo);
 				return tempDownloader;
@@ -96,7 +97,7 @@ namespace YooAsset
 				else
 					newDownloader = new FileDownloader(bundleInfo);
 				newDownloader.SendRequest(failedTryAgain, timeout);
-				_downloaderDic.Add(bundleInfo.Hash, newDownloader);
+				_downloaderDic.Add(name, newDownloader);
 				return newDownloader;
 			}
 		}
@@ -113,20 +114,20 @@ namespace YooAsset
 		/// 查询是否为验证文件
 		/// 注意：被收录的文件完整性是绝对有效的
 		/// </summary>
-		public static bool ContainsVerifyFile(string hash)
+		public static bool ContainsVerifyFile(BundleInfo bundleInfo)
 		{
-			if (_cachedHashList.ContainsKey(hash))
+			if (_cachedHashList.ContainsKey(bundleInfo.Hash))
 			{
-				string filePath = SandboxHelper.MakeCacheFilePath(hash);
+				string filePath = SandboxHelper.MakeCacheFilePath($"{bundleInfo.GetPackageName()}/{_cachedHashList[bundleInfo.Hash]}_{bundleInfo.Hash}");
 				if (File.Exists(filePath))
 				{
 					return true;
 				}
 				else
 				{
-					string bundleName = _cachedHashList[hash];
-					_cachedHashList.Remove(hash);
-					YooLogger.Error($"Cache file is missing : {bundleName} Hash : {hash}");
+					string bundleName = _cachedHashList[bundleInfo.Hash];
+					_cachedHashList.Remove(bundleInfo.Hash);
+					YooLogger.Error($"Cache file is missing : {bundleName} Hash : {bundleInfo}");
 					return false;
 				}
 			}
@@ -136,6 +137,28 @@ namespace YooAsset
 			}
 		}
 
+		public static bool ContainsVerifyFile(PatchBundle bundleInfo)
+		{
+			if (_cachedHashList.ContainsKey(bundleInfo.Hash))
+			{
+				string filePath = SandboxHelper.MakeCacheFilePath($"{bundleInfo.PackageName}/{_cachedHashList[bundleInfo.Hash]}_{bundleInfo.Hash}");
+				if (File.Exists(filePath))
+				{
+					return true;
+				}
+				else
+				{
+					string bundleName = _cachedHashList[bundleInfo.Hash];
+					_cachedHashList.Remove(bundleInfo.Hash);
+					YooLogger.Error($"Cache file is missing : {bundleName} Hash : {bundleInfo}");
+					return false;
+				}
+			}
+			else
+			{
+				return false;
+			}
+		}
 		/// <summary>
 		/// 缓存验证过的文件
 		/// </summary>

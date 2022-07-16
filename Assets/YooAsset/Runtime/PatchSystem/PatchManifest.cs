@@ -42,13 +42,13 @@ namespace YooAsset
 		/// 资源包集合（提供BundleName获取PatchBundle）
 		/// </summary>
 		[NonSerialized]
-		public readonly Dictionary<string, PatchBundle> Bundles = new Dictionary<string, PatchBundle>();
+		public readonly Dictionary<string, PatchBundle> BundleDic = new Dictionary<string, PatchBundle>();
 
 		/// <summary>
 		/// 资源映射集合（提供AssetPath获取PatchAsset）
 		/// </summary>
 		[NonSerialized]
-		public readonly Dictionary<string, PatchAsset> Assets = new Dictionary<string, PatchAsset>();
+		public readonly Dictionary<string, PatchAsset> AssetDic = new Dictionary<string, PatchAsset>();
 
 		/// <summary>
 		/// 资源路径映射集合
@@ -114,7 +114,7 @@ namespace YooAsset
 		/// </summary>
 		public string GetBundleName(string assetPath)
 		{
-			if (Assets.TryGetValue(assetPath, out PatchAsset patchAsset))
+			if (AssetDic.TryGetValue(assetPath, out PatchAsset patchAsset))
 			{
 				string bundleName = patchAsset.BundleID;
 				var patchBundle = BundleList.Find(_ => _.BundleName == bundleName);
@@ -134,32 +134,128 @@ namespace YooAsset
 		}
 
 		/// <summary>
-		/// 获取资源依赖列表
+		/// 获取主资源包
 		/// 注意：传入的资源路径一定合法有效！
 		/// </summary>
-		public string[] GetAllDependencies(string assetPath)
+		public PatchBundle GetMainPatchBundle(string assetPath)
 		{
-			if (Assets.TryGetValue(assetPath, out PatchAsset patchAsset))
+			if (AssetDic.TryGetValue(assetPath, out PatchAsset patchAsset))
 			{
-				List<string> result = new List<string>(patchAsset.DependIDs.Length);
-				foreach (var dependName in patchAsset.DependIDs)
+				string bundleID = patchAsset.BundleID;
+				var patchBundle = BundleList.Find(_ => _.BundleName == bundleID);
+				if (patchBundle!=null)
 				{
-					var dependPatchBundle = BundleList.Find(_ => _.BundleName == dependName);
-					if (dependPatchBundle!=null)
-					{
-						result.Add(dependPatchBundle.BundleName);
-					}
-					else
-					{
-						throw new Exception($"Invalid bundle id : {dependName} Asset path : {assetPath}");
-					}
+					return patchBundle;
 				}
-				return result.ToArray();
+				else
+				{
+					throw new Exception($"Invalid bundle id : {bundleID} Asset path : {assetPath}");
+				}
 			}
 			else
 			{
 				throw new Exception("Should never get here !");
 			}
+		}
+
+        /// <summary>
+        /// 获取资源依赖列表
+        /// 注意：传入的资源路径一定合法有效！
+        /// </summary>
+        public string[] GetAllDependencies(string assetPath)
+        {
+            if (AssetDic.TryGetValue(assetPath, out PatchAsset patchAsset))
+            {
+                List<string> result = new List<string>(patchAsset.DependIDs.Length);
+                foreach (var dependName in patchAsset.DependIDs)
+                {
+					if (!dependName.Contains("@"))
+                    {
+						var dependPatchBundle = BundleList.Find(_ => _.BundleName == dependName);
+						if (dependPatchBundle != null)
+						{
+							result.Add(dependPatchBundle.BundleName);
+						}
+						else
+						{
+							throw new Exception($"Invalid bundle id : {dependName} Asset path : {assetPath}");
+						}
+					}
+                }
+                return result.ToArray();
+            }
+            else
+            {
+                throw new Exception("Should never get here !");
+            }
+        }
+
+		public string[] GetOtherPackageDependencies(string assetPath)
+		{
+			if (AssetDic.TryGetValue(assetPath, out PatchAsset patchAsset))
+			{
+				List<string> result = new List<string>(patchAsset.DependIDs.Length);
+				foreach (var dependName in patchAsset.DependIDs)
+				{
+                    if (dependName.Contains("@")&& !result.Contains(dependName))
+                    {
+						result.Add(dependName);
+					}
+
+				}
+				if(result.Count > 0)
+					return result.ToArray();
+				return null;
+			}
+			else
+			{
+				throw new Exception("Should never get here !");
+			}
+		}
+
+		//      /// <summary>
+		//      /// 获取资源依赖列表
+		//      /// 注意：传入的资源路径一定合法有效！
+		//      /// </summary>
+		//      public PatchBundle[] GetAllDependencies(string assetPath)
+		//{
+		//	if (AssetDic.TryGetValue(assetPath, out PatchAsset patchAsset))
+		//	{
+		//		List<PatchBundle> result = new List<PatchBundle>(patchAsset.DependIDs.Length);
+		//		foreach (var dependID in patchAsset.DependIDs)
+		//		{
+		//			var dependPatchBundle = BundleList.Find(_ => _.BundleName == dependID);
+		//                  if (dependPatchBundle != null)
+		//                  {
+		//                      result.Add(dependPatchBundle);
+		//                  }
+		//                  else
+		//                  {
+		//                      throw new Exception($"Invalid bundle id : {dependID} Asset path : {assetPath}");
+		//                  }
+		//		}
+		//		return result.ToArray();
+		//	}
+		//	else
+		//	{
+		//		throw new Exception("Should never get here !");
+		//	}
+		//}
+
+		/// <summary>
+		/// 尝试获取补丁资源
+		/// </summary>
+		public bool TryGetPatchAsset(string assetPath, out PatchAsset result)
+		{
+			return AssetDic.TryGetValue(assetPath, out result);
+		}
+
+		/// <summary>
+		/// 尝试获取补丁资源包
+		/// </summary>
+		public bool TryGetPatchBundle(string bundleName, out PatchBundle result)
+		{
+			return BundleDic.TryGetValue(bundleName, out result);
 		}
 
 
@@ -183,7 +279,7 @@ namespace YooAsset
 			foreach (var patchBundle in patchManifest.BundleList)
 			{
 				patchBundle.ParseFlagsValue();
-				patchManifest.Bundles.Add(patchBundle.BundleName, patchBundle);
+				patchManifest.BundleDic.Add(patchBundle.BundleName, patchBundle);
 			}
 
 			// AssetList
@@ -191,10 +287,10 @@ namespace YooAsset
 			{
 				// 注意：我们不允许原始路径存在重名
 				string assetPath = patchAsset.AssetPath;
-				if (patchManifest.Assets.ContainsKey(assetPath))
+				if (patchManifest.AssetDic.ContainsKey(assetPath))
 					throw new Exception($"AssetPath have existed : {assetPath}");
 				else
-					patchManifest.Assets.Add(assetPath, patchAsset);
+					patchManifest.AssetDic.Add(assetPath, patchAsset);
 			}
 
 			return patchManifest;

@@ -7,6 +7,9 @@ namespace YooAsset
     {
 		protected AssetBundleLoaderBase OwnerBundle { private set; get; }
 		protected DependAssetBundleGroup DependBundleGroup { private set; get; }
+		protected DependAssetBundlePackage DependAssetBundlePackage { private set; get; }
+
+		protected string[] OtherPackageDependBundles { get; private set; }
 
 		public BundledProvider(AssetInfo assetInfo, AssetSystem assetSystem) : base(assetInfo, assetSystem)
 		{
@@ -14,10 +17,17 @@ namespace YooAsset
 			OwnerBundle.Reference();
 			OwnerBundle.AddProvider(this);
 
+			OtherPackageDependBundles = assetSystem.CreateOtherPackageDependAssetBundleLoaders(assetInfo);
+			if(OtherPackageDependBundles != null&& OtherPackageDependBundles.Length > 0)
+            {
+				DependAssetBundlePackage = new DependAssetBundlePackage(OtherPackageDependBundles);
+			}
+
 			var dependBundles = assetSystem.CreateDependAssetBundleLoaders(assetInfo);
 			DependBundleGroup = new DependAssetBundleGroup(dependBundles);
 			DependBundleGroup.Reference();
 		}
+
 		public override void Destroy()
 		{
 			base.Destroy();
@@ -28,6 +38,13 @@ namespace YooAsset
 				OwnerBundle.Release();
 				OwnerBundle = null;
 			}
+
+            if (DependAssetBundlePackage != null)
+            {
+				DependAssetBundlePackage.Release();
+				DependAssetBundlePackage = null;
+			}
+
 			if (DependBundleGroup != null)
 			{
 				DependBundleGroup.Release();

@@ -6,7 +6,6 @@ using YooAsset;
 public class FsmCreateDownloader : IFsmNode
 {
 	public string Name { private set; get; } = nameof(FsmCreateDownloader);
-	public YooAssets YooAssets { get { return YooAssetsManager.Instance.GetYooAssets("Test"); } }
 
 	void IFsmNode.OnEnter()
 	{
@@ -27,7 +26,7 @@ public class FsmCreateDownloader : IFsmNode
 		Debug.Log("创建补丁下载器.");
 		int downloadingMaxNum = 10;
 		int failedTryAgain = 3;
-		PatchUpdater.Downloader = YooAssets.CreatePatchDownloader(downloadingMaxNum, failedTryAgain);
+		PatchUpdater.Downloader = BootScene.Instance.YooAssets.CreatePatchDownloader(downloadingMaxNum, failedTryAgain);
 		if (PatchUpdater.Downloader.TotalDownloadCount == 0)
 		{
 			Debug.Log("没有发现需要下载的资源");

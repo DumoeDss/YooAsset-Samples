@@ -27,7 +27,34 @@ namespace YooAsset
 
 			if (Status == EStatus.None)
 			{
-				Status = EStatus.CheckBundle;
+                if (DependAssetBundlePackage != null)
+                {
+					Status = EStatus.CheckOtherPackageBundle;
+				}
+				else
+                {
+					Status = EStatus.CheckBundle;
+				}
+			}
+
+			// 0. 检测依赖资源包
+			if (Status == EStatus.CheckOtherPackageBundle)
+            {
+				if (IsWaitForAsyncComplete)
+					DependAssetBundlePackage.WaitForAsyncComplete();
+				if (DependAssetBundlePackage.IsDone() == false)
+					return;
+				if (DependAssetBundlePackage.IsSucceed() == false)
+				{
+					Status = EStatus.Fail;
+					LastError = DependAssetBundlePackage.GetLastError();
+					InvokeCompletion();
+					return;
+                }
+                else
+                {
+					Status = EStatus.CheckBundle;
+				}
 			}
 
 			// 1. 检测资源包

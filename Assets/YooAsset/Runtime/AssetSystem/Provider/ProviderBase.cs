@@ -10,6 +10,7 @@ namespace YooAsset
 		public enum EStatus
 		{
 			None = 0,
+			CheckOtherPackageBundle,
 			CheckBundle,
 			Loading,
 			Checking,

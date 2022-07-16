@@ -6,7 +6,6 @@ using YooAsset;
 internal class FsmPatchInit : IFsmNode
 {
 	public string Name { private set; get; } = nameof(FsmPatchInit);
-	public YooAssets YooAssets { get { return YooAssetsManager.Instance.GetYooAssets("Test"); } }
 
 	void IFsmNode.OnEnter()
 	{

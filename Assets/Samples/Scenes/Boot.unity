@@ -299,8 +299,10 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   version: 100
-  PlayMode: 2
-  hostServerIP: http://192.168.53.154:1024
+  PlayMode: 1
+  artVersion: 88a46b18
+  dependVersion: 948a3bcb
+  hostServerIP: http://192.168.53.154:8080
 --- !u!4 &1281760861
 Transform:
   m_ObjectHideFlags: 0

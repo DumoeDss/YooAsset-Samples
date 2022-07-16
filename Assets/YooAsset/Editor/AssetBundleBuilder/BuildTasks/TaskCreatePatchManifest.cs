@@ -4,6 +4,7 @@ using System.Collections;
 using System.Collections.Generic;
 using static YooAsset.Editor.AssetBundleBuilder;
 using System.Linq;
+using UnityEngine;
 
 namespace YooAsset.Editor
 {
@@ -103,11 +104,19 @@ namespace YooAsset.Editor
 				File.Move(manifestFilePath, path);
 				createPatchManifestContext.PatchManifestPaths.Add($"{"Manifest_" + patchManifest.PackageName}_{crc}");
 				// 创建补丁清单哈希文件
-				string manifestHashFilePath = $"{buildParameters.PipelineOutputDirectory}/{YooAssetSettingsData.GetPatchManifestHashFileName("Manifest_" + patchManifest.PackageName)}";
+				string manifestHashFilePath = $"{buildParameters.PipelineOutputDirectory}/{YooAssetSettingsData.GetPatchManifestHashFileName($"{"Manifest_" + patchManifest.PackageName}_{crc}")}";
 				BuildRunner.Log($"创建补丁清单哈希文件：{manifestHashFilePath}");
-				FileUtility.CreateFile(manifestHashFilePath, crc);
+				var info = new FileInfo(path);
 
-				//FileUtility.CreateFile($"{path}.ver", crc);
+				YooAssetVersion yooAssetVersion = new YooAssetVersion()
+				{
+					crc = crc,
+					version = 1,
+					size = info.Length
+				};
+
+				var json = JsonUtility.ToJson(yooAssetVersion);
+				FileUtility.CreateFile(manifestHashFilePath, json);
 
 			}
 
@@ -156,7 +165,7 @@ namespace YooAsset.Editor
 					hash += bundleInfo.GetAppendExtension();
 				}
 
-				PatchBundle patchBundle = new PatchBundle(bundleName, hash, crc32, size, tags);
+				PatchBundle patchBundle = new PatchBundle(package, bundleName, hash, crc32, size, tags);
 				patchBundle.SetFlagsValue(isEncrypted, isBuildin, isRawFile);
 				result[package].Add(patchBundle);
 			}
