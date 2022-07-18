@@ -187,7 +187,7 @@ public class Game1Scene : MonoBehaviour
 			var btn = CanvasRoot.transform.Find("load_scene").GetComponent<Button>();
 			btn.onClick.AddListener(() =>
 			{
-				YooAssets.LoadSceneAsync("Scene/Game2.unity");
+				YooAssets.LoadSceneAsync("scene/Game2.unity");
 			});
 		}
 	}

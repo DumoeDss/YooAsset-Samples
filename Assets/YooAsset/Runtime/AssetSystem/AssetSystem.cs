@@ -12,7 +12,6 @@ namespace YooAsset
 		private  readonly List<ProviderBase> _providers = new List<ProviderBase>(1000);
 		private  readonly Dictionary<string, SceneOperationHandle> _sceneHandles = new Dictionary<string, SceneOperationHandle>(100);
 		
-		private  bool _simulationOnEditor;
 		private  int _loadingMaxNumber;
 		public  IDecryptionServices DecryptionServices { private set; get; }
 		public  IBundleServices BundleServices { private set; get; }
@@ -22,9 +21,8 @@ namespace YooAsset
 		/// 初始化
 		/// 注意：在使用AssetSystem之前需要初始化
 		/// </summary>
-		public void Initialize(bool simulationOnEditor, int loadingMaxNumber, IDecryptionServices decryptionServices, IBundleServices bundleServices)
+		public void Initialize(int loadingMaxNumber, IDecryptionServices decryptionServices, IBundleServices bundleServices)
 		{
-			_simulationOnEditor = simulationOnEditor;
 			_loadingMaxNumber = loadingMaxNumber;
 			DecryptionServices = decryptionServices;
 			BundleServices = bundleServices;
@@ -81,18 +79,6 @@ namespace YooAsset
 		/// </summary>
 		public  void UnloadUnusedAssets()
 		{
-			if (_simulationOnEditor)
-			{
-				for (int i = _providers.Count - 1; i >= 0; i--)
-				{
-					if (_providers[i].CanDestroy())
-					{
-						_providers[i].Destroy();
-						_providers.RemoveAt(i);
-					}
-				}
-			}
-			else
 			{
 				for (int i = _loaders.Count - 1; i >= 0; i--)
 				{
@@ -158,9 +144,6 @@ namespace YooAsset
 			ProviderBase provider = TryGetProvider(providerGUID);
 			if (provider == null)
 			{
-				if (_simulationOnEditor)
-					provider = new DatabaseSceneProvider(assetInfo,this, sceneMode, activateOnLoad, priority);
-				else
 					provider = new BundledSceneProvider(assetInfo,this, sceneMode, activateOnLoad, priority);
 				provider.InitSpawnDebugInfo();
 				_providers.Add(provider);
@@ -186,9 +169,6 @@ namespace YooAsset
 			ProviderBase provider = TryGetProvider(assetInfo.ProviderGUID);
 			if (provider == null)
 			{
-				if (_simulationOnEditor)
-					provider = new DatabaseAssetProvider(assetInfo,this);
-				else
 					provider = new BundledAssetProvider(assetInfo,this);
 				provider.InitSpawnDebugInfo();
 				_providers.Add(provider);
@@ -211,9 +191,7 @@ namespace YooAsset
 			ProviderBase provider = TryGetProvider(assetInfo.ProviderGUID);
 			if (provider == null)
 			{
-				if (_simulationOnEditor)
-					provider = new DatabaseSubAssetsProvider(assetInfo,this);
-				else
+				
 					provider = new BundledSubAssetsProvider(assetInfo,this);
 				provider.InitSpawnDebugInfo();
 				_providers.Add(provider);

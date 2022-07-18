@@ -145,14 +145,14 @@ namespace YooAsset
 			{
 				_offlinePlayModeImpl = new OfflinePlayModeImpl();
 				_bundleServices = _offlinePlayModeImpl;
-				AssetSystem.Initialize(false, parameters.AssetLoadingMaxNumber, parameters.DecryptionServices, _bundleServices);
+				AssetSystem.Initialize(parameters.AssetLoadingMaxNumber, parameters.DecryptionServices, _bundleServices);
 				initializeOperation = _offlinePlayModeImpl.InitializeAsync(parameters.LocationToLower);
 			}
 			else if (_playMode == EPlayMode.HostPlayMode)
 			{
 				_hostPlayModeImpl = new HostPlayModeImpl();
 				_bundleServices = _hostPlayModeImpl;
-				AssetSystem.Initialize(false, parameters.AssetLoadingMaxNumber, parameters.DecryptionServices, _bundleServices);
+				AssetSystem.Initialize(parameters.AssetLoadingMaxNumber, parameters.DecryptionServices, _bundleServices);
 				var hostPlayModeParameters = parameters as HostPlayModeParameters;
 				initializeOperation = _hostPlayModeImpl.InitializeAsync(
 					hostPlayModeParameters.LocationToLower,

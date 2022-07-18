@@ -56,6 +56,7 @@ namespace YooAsset
 		/// </summary>
 		public void AddProvider(ProviderBase provider)
 		{
+			Debug.Log(provider.MainAssetInfo.AssetPath);
 			if (_providers.Contains(provider) == false)
 				_providers.Add(provider);
 		}
