@@ -14,14 +14,15 @@ namespace YooAsset
 			}
 		}
 
-		public CompletedProvider(AssetInfo assetInfo, AssetSystem assetSystem) : base(assetInfo, assetSystem)
+		public CompletedProvider( AssetInfo assetInfo, AssetSystem assetSystem) : base(string.Empty, assetInfo, assetSystem)
 		{
 		}
 		public override void Update()
 		{
-			if (IsDone)
-				return;
+		}
 
+		public void SetCompleted()
+		{
 			if (Status == EStatus.None)
 			{
 				Status = EStatus.Fail;

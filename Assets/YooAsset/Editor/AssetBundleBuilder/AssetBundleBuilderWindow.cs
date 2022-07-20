@@ -196,6 +196,7 @@ namespace YooAsset.Editor
 			buildParameters.OutputRoot = defaultOutputRoot;
 			buildParameters.BuildTarget = _buildTarget;
 			buildParameters.BuildMode = buildMode;
+			buildParameters.BuildVersion = AssetBundleBuilderSettingData.Setting.BuildVersion;
 			buildParameters.BuildinTags = _buildinTagsField.value;
 			buildParameters.VerifyBuildingResult = true;
 			buildParameters.AppendFileExtension = _appendExtensionToggle.value;

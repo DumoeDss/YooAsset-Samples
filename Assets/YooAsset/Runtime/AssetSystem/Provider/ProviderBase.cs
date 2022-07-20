@@ -18,6 +18,8 @@ namespace YooAsset
 			Fail,
 		}
 
+		public string ProviderGUID { private set; get; }
+
 		/// <summary>
 		/// 资源信息
 		/// </summary>
@@ -86,8 +88,9 @@ namespace YooAsset
 		private readonly List<OperationHandleBase> _handles = new List<OperationHandleBase>();
 
 		internal AssetSystem assetSystem;
-		public ProviderBase(AssetInfo assetInfo, AssetSystem assetSystem)
+		public ProviderBase(string providerGUID, AssetInfo assetInfo, AssetSystem assetSystem)
 		{
+			ProviderGUID = providerGUID;
 			MainAssetInfo = assetInfo;
 			this.assetSystem = assetSystem;
 		}

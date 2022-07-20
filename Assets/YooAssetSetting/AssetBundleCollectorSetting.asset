@@ -119,26 +119,26 @@ MonoBehaviour:
     - GroupName: Art
       GroupDesc: "\u7F8E\u672F\u8D44\u6E90"
       AssetTags: 
-      PackRuleName: PackGroup
+      PackRuleName: PackCollector
       Collectors:
       - CollectPath: Assets/Samples/GameArt/ShaderVariants
         Address: ShaderVariants
-        CollectorType: 0
-        PackRuleName: PackGroup
+        CollectorType: 2
+        PackRuleName: PackCollector
         AddressRuleName: AddressByFileName
         FilterRuleName: CollectAll
         AssetTags: 
       - CollectPath: Assets/Samples/GameArt/Entity/Gometry
         Address: Gometry
         CollectorType: 2
-        PackRuleName: PackGroup
+        PackRuleName: PackCollector
         AddressRuleName: AddressByFileName
         FilterRuleName: CollectAll
         AssetTags: 
       - CollectPath: Assets/Samples/GameArt/UIFont
         Address: UIFont
         CollectorType: 2
-        PackRuleName: PackGroup
+        PackRuleName: PackCollector
         AddressRuleName: AddressByFileName
         FilterRuleName: CollectAll
         AssetTags: 
@@ -178,12 +178,24 @@ MonoBehaviour:
         AddressRuleName: AddressByGroupAndFileName
         FilterRuleName: CollectAll
         AssetTags: 
+    - GroupName: uiatlas
+      GroupDesc: 
+      AssetTags: 
+      PackRuleName: PackGroup
+      Collectors:
+      - CollectPath: Assets/Samples/GameRes/UIAtlas
+        Address: uiatlas
+        CollectorType: 0
+        PackRuleName: PackGroup
+        AddressRuleName: AddressByGroupAndFileName
+        FilterRuleName: CollectAll
+        AssetTags: 
   - PackageName: Dependency
-    PackageDesc: "\u6A21\u578B\u4F9D\u8D56"
-    IncludeInBuild: 1
+    PackageDesc: "\u4F9D\u8D56"
+    IncludeInBuild: 0
     Groups:
     - GroupName: fbx
-      GroupDesc: "\u6A21\u578B"
+      GroupDesc: 
       AssetTags: 
       PackRuleName: PackGroup
       Collectors:

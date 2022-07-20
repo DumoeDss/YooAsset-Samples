@@ -9,7 +9,7 @@ namespace YooAsset
 		/// <summary>
 		/// 资源提供者唯一标识符
 		/// </summary>
-		internal string ProviderGUID
+		internal string GUID
 		{
 			get
 			{

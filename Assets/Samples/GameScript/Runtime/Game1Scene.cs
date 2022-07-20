@@ -65,7 +65,7 @@ public class Game1Scene : MonoBehaviour
 			AssetInfo[] assetInfos = YooAssets.GetAssetInfos(assetTag);
 			foreach (var assetInfo in assetInfos)
 			{
-				Debug.Log($"{assetInfo.AssetPath}");
+				Debug.Log($"通过资源标签加载资源: {assetInfo.AssetPath}");
 			}
 		}
 
@@ -154,7 +154,7 @@ public class Game1Scene : MonoBehaviour
 			var btn = CanvasRoot.transform.Find("load_unity_atlas/btn").GetComponent<Button>();
 			btn.onClick.AddListener(() =>
 			{
-				AssetOperationHandle handle = YooAssets.LoadAssetAsync<SpriteAtlas>("UIAtlas/UnityPacker/unityAtlas");
+				AssetOperationHandle handle = YooAssets.LoadAssetAsync<SpriteAtlas>("uiatlas/UnityPacker/unityAtlas.spriteatlas");
 				_cachedAssetOperationHandles.Add(handle);
 				handle.Completed += OnUnityAtlas_Completed;
 			});
@@ -165,7 +165,7 @@ public class Game1Scene : MonoBehaviour
 			var btn = CanvasRoot.transform.Find("load_tp_atlas/btn").GetComponent<Button>();
 			btn.onClick.AddListener(() =>
 			{
-				SubAssetsOperationHandle handle = YooAssets.LoadSubAssetsAsync<Sprite>("UIAtlas/TexturePacker/tpAtlas");
+				SubAssetsOperationHandle handle = YooAssets.LoadSubAssetsAsync<Sprite>("uiatlas/TexturePacker/tpAtlas.png");
 				_cachedSubAssetsOperationHandles.Add(handle);
 				handle.Completed += OnTpAtlasAsset_Completed;
 			});

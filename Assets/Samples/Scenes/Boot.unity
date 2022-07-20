@@ -300,8 +300,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   version: 100
   PlayMode: 1
-  artVersion: 607aa3ca
-  dependVersion: 948a3bcb
+  artVersion: d152491b
+  dependVersion: 562e3119
   hostServerIP: http://192.168.53.154:8080
 --- !u!4 &1281760861
 Transform:

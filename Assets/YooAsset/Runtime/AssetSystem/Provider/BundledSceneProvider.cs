@@ -23,7 +23,8 @@ namespace YooAsset
 			}
 		}
 
-		public BundledSceneProvider(AssetInfo assetInfo, AssetSystem assetSystem, LoadSceneMode sceneMode, bool activateOnLoad, int priority) : base(assetInfo, assetSystem)
+		public BundledSceneProvider(string providerGUID, AssetInfo assetInfo, AssetSystem assetSystem, LoadSceneMode sceneMode, bool activateOnLoad, int priority) 
+			: base(providerGUID, assetInfo, assetSystem)
 		{
 			SceneMode = sceneMode;
 			_sceneName = Path.GetFileNameWithoutExtension(assetInfo.AssetPath);

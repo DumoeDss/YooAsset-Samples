@@ -17,7 +17,7 @@ namespace YooAsset
 			}
 		}
 
-		public BundledSubAssetsProvider(AssetInfo assetInfo, AssetSystem assetSystem) : base(assetInfo, assetSystem)
+		public BundledSubAssetsProvider(string providerGUID, AssetInfo assetInfo, AssetSystem assetSystem) : base(providerGUID, assetInfo, assetSystem)
 		{
 		}
 		public override void Update()

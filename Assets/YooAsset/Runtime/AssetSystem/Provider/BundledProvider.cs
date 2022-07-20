@@ -11,19 +11,19 @@ namespace YooAsset
 
 		protected string[] OtherPackageDependBundles { get; private set; }
 
-		public BundledProvider(AssetInfo assetInfo, AssetSystem assetSystem) : base(assetInfo, assetSystem)
+		public BundledProvider(string providerGUID, AssetInfo assetInfo, AssetSystem assetSystem) : base(providerGUID, assetInfo, assetSystem)
 		{
 			OwnerBundle = assetSystem.CreateOwnerAssetBundleLoader(assetInfo);
 			OwnerBundle.Reference();
 			OwnerBundle.AddProvider(this);
 
-			OtherPackageDependBundles = assetSystem.CreateOtherPackageDependAssetBundleLoaders(assetInfo);
-			if(OtherPackageDependBundles != null&& OtherPackageDependBundles.Length > 0)
+            OtherPackageDependBundles = assetSystem.CreateOtherPackageDependAssetBundleLoaders(assetInfo);
+            if (OtherPackageDependBundles != null && OtherPackageDependBundles.Length > 0)
             {
-				DependAssetBundlePackage = new DependAssetBundlePackage(OtherPackageDependBundles);
-			}
+                DependAssetBundlePackage = new DependAssetBundlePackage(OtherPackageDependBundles);
+            }
 
-			var dependBundles = assetSystem.CreateDependAssetBundleLoaders(assetInfo);
+            var dependBundles = assetSystem.CreateDependAssetBundleLoaders(assetInfo);
 			DependBundleGroup = new DependAssetBundleGroup(dependBundles);
 			DependBundleGroup.Reference();
 		}

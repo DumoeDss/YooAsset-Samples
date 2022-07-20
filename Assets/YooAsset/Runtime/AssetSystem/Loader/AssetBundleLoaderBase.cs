@@ -49,6 +49,7 @@ namespace YooAsset
 			RefCount = 0;
 			Status = EStatus.None;
 			this.assetSystem = assetSystem;
+			Debug.Log("AssetBundleLoaderBase: " + bundleInfo.BundleName);
 		}
 
 		/// <summary>
@@ -56,7 +57,7 @@ namespace YooAsset
 		/// </summary>
 		public void AddProvider(ProviderBase provider)
 		{
-			Debug.Log(provider.MainAssetInfo.AssetPath);
+			Debug.Log("AddProvider: "+provider.MainAssetInfo.AssetPath);
 			if (_providers.Contains(provider) == false)
 				_providers.Add(provider);
 		}
@@ -136,7 +137,10 @@ namespace YooAsset
 			foreach (var provider in _providers)
 			{
 				if (provider.CanDestroy() == false)
-					return;
+                    //if (provider.IsSceneProvider())
+                    //    continue;
+                    //else
+                        return;
 			}
 
 			// 除了自己没有其它引用

@@ -17,7 +17,7 @@ namespace YooAsset
 			}
 		}
 
-		public DatabaseAssetProvider(AssetInfo assetInfo, AssetSystem assetSystem) : base(assetInfo, assetSystem)
+		public DatabaseAssetProvider(string providerGUID, AssetInfo assetInfo, AssetSystem assetSystem) : base(providerGUID, assetInfo, assetSystem)
 		{
 		}
 		public override void Update()
