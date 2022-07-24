@@ -24,9 +24,6 @@ namespace YooAsset
 
 		public string PackageName;
 
-		public List<string> DependPackages;
-		public List<string> DependBundles;
-
 		/// <summary>
 		/// 资源列表（主动收集的资源列表）
 		/// </summary>

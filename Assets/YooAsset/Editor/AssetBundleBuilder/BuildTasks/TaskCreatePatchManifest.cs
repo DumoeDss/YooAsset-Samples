@@ -43,55 +43,50 @@ namespace YooAsset.Editor
 				patchManifest.BuildinTags = buildParameters.Parameters.BuildinTags;
 				patchManifest.PackageName = bundle.Key;
 				patchManifest.BundleList = bundle.Value;
-				patchManifest.DependPackages = new List<string>();
-				patchManifest.DependBundles = new List<string>();
+				//patchManifest.DependPackages = new List<string>();
 
 				var patchAssets = GetAllPatchAsset(buildParameters, buildMapContext, patchManifest.PackageName);
 				patchManifest.AssetList=patchAssets.Select(_=>_).Where(_=>!string.IsNullOrEmpty(_.Address)).ToList();
-				foreach (var item in patchManifest.AssetList)
-				{
-					if (item.DependIDs != null)
-					{
-						foreach (var dependID in item.DependIDs)
-						{
-							if (dependID.Contains("@"))
-							{
-								var depend = dependID.Split('@');
-								if (!patchManifest.DependPackages.Contains(depend[0]))
-								{
-									patchManifest.DependPackages.Add(depend[0]);
-								}
+				//foreach (var item in patchManifest.AssetList)
+				//{
+				//	if (item.DependIDs != null)
+				//	{
+				//		foreach (var dependID in item.DependIDs)
+				//		{
+				//			if (dependID.Contains("@"))
+				//			{
+				//				var depend = dependID.Split('@');
+				//				if (!patchManifest.DependPackages.Contains(depend[0]))
+				//				{
+				//					patchManifest.DependPackages.Add(depend[0]);
+				//				}
 
-							}
-						}
-					}
-				}
+				//			}
+				//		}
+				//	}
+				//}
 
-				var dependAssets = patchAssets.Select(_ => _).Where(_ => string.IsNullOrEmpty(_.Address)).ToList();
-				if(dependAssets!=null&& dependAssets.Count() > 0)
-                {
-                    foreach (var item in dependAssets)
-                    {
-						if (item.DependIDs != null)
-						{
-							foreach (var dependID in item.DependIDs)
-							{
-								if (dependID.Contains("@"))
-								{
-									var depend = dependID.Split('@');
-									if (!patchManifest.DependPackages.Contains(depend[0]))
-									{
-										patchManifest.DependPackages.Add(depend[0]);
-									}
-								}
-								if (!patchManifest.DependBundles.Contains(dependID))
-								{
-									patchManifest.DependBundles.Add(dependID);
-								}
-							}
-						}
-					}
-                }
+				//var dependAssets = patchAssets.Select(_ => _).Where(_ => string.IsNullOrEmpty(_.Address)).ToList();
+				//if(dependAssets!=null&& dependAssets.Count() > 0)
+    //            {
+    //                foreach (var item in dependAssets)
+    //                {
+				//		if (item.DependIDs != null)
+				//		{
+				//			foreach (var dependID in item.DependIDs)
+				//			{
+				//				if (dependID.Contains("@"))
+				//				{
+				//					var depend = dependID.Split('@');
+				//					if (!patchManifest.DependPackages.Contains(depend[0]))
+				//					{
+				//						patchManifest.DependPackages.Add(depend[0]);
+				//					}
+				//				}
+				//			}
+				//		}
+				//	}
+    //            }
 		
 				// 创建补丁清单文件
 				string manifestFilePath = $"{buildParameters.PipelineOutputDirectory}/{"Manifest_" + patchManifest.PackageName}";

@@ -345,12 +345,14 @@ namespace YooAsset
 		public SceneOperationHandle LoadSceneAsync(AssetInfo assetInfo, LoadSceneMode sceneMode = LoadSceneMode.Single, bool activateOnLoad = true, int priority = 100)
 		{
 			DebugCheckInitialize();
+			if (assetInfo.IsInvalid)
+				YooLogger.Warning(assetInfo.Error);
 			var handle = AssetSystem.LoadSceneAsync(assetInfo, sceneMode, activateOnLoad, priority);
 			return handle;
 		}
 		#endregion
 
-		#region 资源加载
+		#region 原生文件
 		/// <summary>
 		/// 异步获取原生文件
 		/// </summary>
@@ -379,7 +381,6 @@ namespace YooAsset
 		{
 			if (assetInfo.IsInvalid)
 			{
-				YooLogger.Warning(assetInfo.Error);
 				RawFileOperation operation = new CompletedRawFileOperation(assetInfo.Error, copyPath);
 				OperationSystem.StartOperaiton(operation);
 				return operation;

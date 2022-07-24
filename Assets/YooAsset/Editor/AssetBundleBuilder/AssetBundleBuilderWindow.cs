@@ -243,6 +243,7 @@ namespace YooAsset.Editor
 			buildParameters.OutputRoot = defaultOutputRoot;
 			buildParameters.BuildTarget = _buildTarget;
 			buildParameters.BuildVersion = AssetBundleBuilderSettingData.Setting.BuildVersion++;
+			EditorUtility.SetDirty(AssetBundleBuilderSettingData.Setting);
 			buildParameters.BuildMode = buildMode;
 			buildParameters.BuildinTags = _buildinTagsField.value;
 			buildParameters.VerifyBuildingResult = true;
