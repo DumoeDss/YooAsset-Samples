@@ -24,6 +24,7 @@ MonoBehaviour:
       Collectors:
       - CollectPath: Assets/Samples/GameRes/Entity/Level1/footman_Blue.prefab
         Address: footman_Blue.prefab
+        IsAssembly: 0
         CollectorType: 0
         PackRuleName: PackGroup
         AddressRuleName: AddressByFileName
@@ -31,6 +32,7 @@ MonoBehaviour:
         AssetTags: level1
       - CollectPath: Assets/Samples/GameRes/Entity/Level2/footman_Green.prefab
         Address: footman_Green.prefab
+        IsAssembly: 0
         CollectorType: 0
         PackRuleName: PackGroup
         AddressRuleName: AddressByFileName
@@ -38,6 +40,7 @@ MonoBehaviour:
         AssetTags: level2
       - CollectPath: Assets/Samples/GameRes/Entity/Level3
         Address: level3
+        IsAssembly: 0
         CollectorType: 0
         PackRuleName: PackGroup
         AddressRuleName: AddressByFileName
@@ -45,6 +48,7 @@ MonoBehaviour:
         AssetTags: level3
       - CollectPath: Assets/Samples/GameRes/Entity/Cube
         Address: cube
+        IsAssembly: 0
         CollectorType: 0
         PackRuleName: PackGroup
         AddressRuleName: AddressByFileName
@@ -52,6 +56,7 @@ MonoBehaviour:
         AssetTags: cube
       - CollectPath: Assets/Samples/GameRes/Entity/Sphere
         Address: sphere
+        IsAssembly: 0
         CollectorType: 0
         PackRuleName: PackGroup
         AddressRuleName: AddressByFileName
@@ -64,6 +69,7 @@ MonoBehaviour:
       Collectors:
       - CollectPath: Assets/Samples/GameRes/Scene
         Address: scene
+        IsAssembly: 0
         CollectorType: 0
         PackRuleName: PackCollector
         AddressRuleName: AddressByFileName
@@ -71,6 +77,7 @@ MonoBehaviour:
         AssetTags: 
       - CollectPath: Assets/Samples/GameRes/Config
         Address: config
+        IsAssembly: 0
         CollectorType: 0
         PackRuleName: PackCollector
         AddressRuleName: AddressByFileName
@@ -78,6 +85,7 @@ MonoBehaviour:
         AssetTags: 
       - CollectPath: Assets/Samples/GameRes/Shaders
         Address: shaders
+        IsAssembly: 0
         CollectorType: 0
         PackRuleName: PackCollector
         AddressRuleName: AddressByFileName
@@ -85,6 +93,7 @@ MonoBehaviour:
         AssetTags: 
       - CollectPath: Assets/Samples/GameRes/Music
         Address: music
+        IsAssembly: 0
         CollectorType: 0
         PackRuleName: PackCollector
         AddressRuleName: AddressByFileName
@@ -92,6 +101,15 @@ MonoBehaviour:
         AssetTags: 
       - CollectPath: Assets/Samples/GameArt/Shaders
         Address: GameArt/Shaders
+        IsAssembly: 0
+        CollectorType: 0
+        PackRuleName: PackCollector
+        AddressRuleName: AddressByGroupAndFileName
+        FilterRuleName: CollectAll
+        AssetTags: 
+      - CollectPath: Assets/Samples/Android
+        Address: Assembly
+        IsAssembly: 1
         CollectorType: 0
         PackRuleName: PackCollector
         AddressRuleName: AddressByGroupAndFileName
@@ -104,6 +122,7 @@ MonoBehaviour:
       Collectors:
       - CollectPath: Assets/Samples/GameRes/Texture
         Address: Texture
+        IsAssembly: 0
         CollectorType: 0
         PackRuleName: PackGroup
         AddressRuleName: AddressByFileName
@@ -111,6 +130,7 @@ MonoBehaviour:
         AssetTags: 
       - CollectPath: Assets/Samples/GameArt/UISprite/UIIcons
         Address: UIIcons
+        IsAssembly: 0
         CollectorType: 0
         PackRuleName: PackGroup
         AddressRuleName: AddressByFileName
@@ -123,6 +143,7 @@ MonoBehaviour:
       Collectors:
       - CollectPath: Assets/Samples/GameArt/ShaderVariants
         Address: ShaderVariants
+        IsAssembly: 0
         CollectorType: 2
         PackRuleName: PackCollector
         AddressRuleName: AddressByFileName
@@ -130,6 +151,7 @@ MonoBehaviour:
         AssetTags: 
       - CollectPath: Assets/Samples/GameArt/Entity/Gometry
         Address: Gometry
+        IsAssembly: 0
         CollectorType: 2
         PackRuleName: PackCollector
         AddressRuleName: AddressByFileName
@@ -137,6 +159,7 @@ MonoBehaviour:
         AssetTags: 
       - CollectPath: Assets/Samples/GameArt/UIFont
         Address: UIFont
+        IsAssembly: 0
         CollectorType: 2
         PackRuleName: PackCollector
         AddressRuleName: AddressByFileName
@@ -149,6 +172,7 @@ MonoBehaviour:
       Collectors:
       - CollectPath: Assets/Samples/Test/Sphere.prefab
         Address: Sphere.prefab
+        IsAssembly: 0
         CollectorType: 0
         PackRuleName: PackGroup
         AddressRuleName: AddressByGroupAndFileName
@@ -161,6 +185,7 @@ MonoBehaviour:
       Collectors:
       - CollectPath: Assets/Samples/Test/Unlit_TestShader.mat
         Address: Assets/Samples/Test/Unlit_TestShader.mat
+        IsAssembly: 0
         CollectorType: 2
         PackRuleName: PackGroup
         AddressRuleName: AddressByGroupAndFileName
@@ -173,6 +198,7 @@ MonoBehaviour:
       Collectors:
       - CollectPath: Assets/Samples/Test/SurfaceShader.shader
         Address: Assets/Samples/Test/SurfaceShader.shader
+        IsAssembly: 0
         CollectorType: 2
         PackRuleName: PackGroup
         AddressRuleName: AddressByGroupAndFileName
@@ -185,6 +211,7 @@ MonoBehaviour:
       Collectors:
       - CollectPath: Assets/Samples/GameRes/UIAtlas
         Address: uiatlas
+        IsAssembly: 0
         CollectorType: 0
         PackRuleName: PackGroup
         AddressRuleName: AddressByGroupAndFileName
@@ -201,6 +228,7 @@ MonoBehaviour:
       Collectors:
       - CollectPath: Assets/Samples/GameArt/Entity/Footman
         Address: Footman
+        IsAssembly: 0
         CollectorType: 2
         PackRuleName: PackGroup
         AddressRuleName: AddressByGroupAndFileName

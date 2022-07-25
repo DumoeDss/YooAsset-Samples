@@ -47,7 +47,8 @@ namespace YooAsset.Editor
 						collectAssetInfo.BundleName,
 						collectAssetInfo.Address, 
 						collectAssetInfo.AssetPath, 
-						collectAssetInfo.IsRawAsset);
+						collectAssetInfo.IsRawAsset,
+						collectAssetInfo.IsAssemblyAsset);
 					buildAssetInfo.AddAssetTags(collectAssetInfo.AssetTags);
 					buildAssetInfo.AddBundleTags(collectAssetInfo.AssetTags);
 					buildAssetDic.Add(collectAssetInfo.AssetPath, buildAssetInfo);

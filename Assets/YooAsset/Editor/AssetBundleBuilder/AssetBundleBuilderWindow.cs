@@ -221,6 +221,7 @@ namespace YooAsset.Editor
 			buildParameters.BuildTarget = _buildTarget;
 			buildParameters.BuildMode = buildMode;
 			buildParameters.BuildinTags = _buildinTagsField.value;
+			buildParameters.BuildVersion = AssetBundleBuilderSettingData.Setting.BuildVersion;
 			buildParameters.VerifyBuildingResult = true;
 			buildParameters.AppendFileExtension = _appendExtensionToggle.value;
 			buildParameters.CopyBuildinTagFiles = buildMode == EBuildMode.ForceRebuild;

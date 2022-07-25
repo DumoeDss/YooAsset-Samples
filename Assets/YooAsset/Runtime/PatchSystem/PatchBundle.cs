@@ -49,12 +49,15 @@ namespace YooAsset
 		/// </summary>
 		public bool IsBuildin { private set; get; }
 
+		public bool IsAssemblyAsset { private set; get; }
+		public string AssemblyAddresses { private set; get; }
+
 		/// <summary>
 		/// 是否为原生文件
 		/// </summary>
 		public bool IsRawFile { private set; get; }
 
-		public PatchBundle(string packageName, string bundleName, string hash, string crc, long sizeBytes, string[] tags)
+		public PatchBundle(string packageName, string bundleName, string hash, string crc, long sizeBytes, string[] tags, bool isAssemblyAsset,string assemblyAddresses)
 		{
 			PackageName = packageName;
 			BundleName = bundleName;
@@ -62,6 +65,8 @@ namespace YooAsset
 			CRC = crc;
 			SizeBytes = sizeBytes;
 			Tags = tags;
+			IsAssemblyAsset = isAssemblyAsset;
+			AssemblyAddresses = assemblyAddresses;
 		}
 
 		/// <summary>

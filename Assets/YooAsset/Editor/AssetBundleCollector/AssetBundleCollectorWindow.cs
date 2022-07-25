@@ -32,6 +32,9 @@ namespace YooAsset.Editor
 		private Toggle _includeInBuildToogle;
 		private VisualElement _packageContainer;
 		private string _lastModifyPackage = string.Empty;
+		//private Toggle _includeScriptToogle;
+		//private TextField _assemblyAddressTxt;
+
 		#endregion
 
 		#region Group
@@ -142,6 +145,30 @@ namespace YooAsset.Editor
 						AssetBundleCollectorSettingData.ModifyPackage(selectPackage);
 					}
 				});
+				//_assemblyAddressTxt = root.Q<TextField>("AssemblyAddress");
+				//_assemblyAddressTxt.visible = false;
+				//_assemblyAddressTxt.RegisterValueChangedCallback(evt =>
+				//{
+				//	var selectPackage = _packageListView.selectedItem as AssetBundleCollectorPackage;
+				//	if (selectPackage != null)
+				//	{
+				//		selectPackage.AssemblyAddresses = evt.newValue;
+				//		AssetBundleCollectorSettingData.ModifyPackage(selectPackage);
+				//	}
+				//});
+
+				//_includeScriptToogle = root.Q<Toggle>("IncludeScript");
+				//_includeScriptToogle.RegisterValueChangedCallback(evt =>
+				//{
+				//	var selectPackage = _packageListView.selectedItem as AssetBundleCollectorPackage;
+				//	if (selectPackage != null)
+				//	{
+				//		selectPackage.IncludeScript = evt.newValue;
+				//		AssetBundleCollectorSettingData.ModifyPackage(selectPackage);
+				//	}
+				//	_assemblyAddressTxt.visible = evt.newValue;
+				//});
+
 				#endregion
 
 
@@ -359,6 +386,8 @@ namespace YooAsset.Editor
 				_packageNameTxt.value = selectPackage.PackageName;
 				_packageDescTxt.value = selectPackage.PackageDesc;
 				_includeInBuildToogle.value = selectPackage.IncludeInBuild;
+				//_includeScriptToogle.value= selectPackage.IncludeScript;
+				//_assemblyAddressTxt.value = selectPackage.AssemblyAddresses;
 			}
 
 			else
@@ -366,6 +395,8 @@ namespace YooAsset.Editor
 				_packageNameTxt.value = "";
 				_packageDescTxt.value = "";
 				_includeInBuildToogle.value = false;
+				//_includeScriptToogle.value = false;
+				//_assemblyAddressTxt.value = "";
 			}
 
 			_lastModifyPackage = selectPackage.PackageName;
@@ -584,6 +615,16 @@ namespace YooAsset.Editor
 				popupField.style.width = 150;
 				elementBottom.Add(popupField);
 			}
+
+			{
+				var isAssembly = new Toggle();
+				isAssembly.name = "IsAssembly";
+				isAssembly.text = "Assembly";
+				isAssembly.style.unityTextAlign = TextAnchor.MiddleCenter;
+				isAssembly.style.flexGrow = 0f;
+				elementTop.Add(isAssembly);
+			}
+
 			{
 				var textField = new TextField();
 				textField.name = "TextField1";
@@ -705,6 +746,14 @@ namespace YooAsset.Editor
 				{
 					RefreshFoldout(foldout, selectPackage, selectGroup, collector);
 				}
+			});
+
+			var isAssemblyAsset = element.Q<Toggle>("IsAssembly");
+			isAssemblyAsset.SetValueWithoutNotify(collector.IsAssembly);
+			isAssemblyAsset.RegisterValueChangedCallback(evt =>
+			{
+				collector.IsAssembly = evt.newValue;
+				AssetBundleCollectorSettingData.ModifyCollector(selectGroup, collector);
 			});
 
 			// Tags

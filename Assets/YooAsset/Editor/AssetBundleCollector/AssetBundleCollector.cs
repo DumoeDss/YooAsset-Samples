@@ -16,6 +16,8 @@ namespace YooAsset.Editor
 
 		public string Address = string.Empty;
 
+		public bool IsAssembly = false;
+
 		/// <summary>
 		/// 收集器类型
 		/// </summary>
@@ -113,7 +115,7 @@ namespace YooAsset.Editor
 					{
 						if (result.ContainsKey(assetPath) == false)
 						{
-							var collectAssetInfo = CreateCollectAssetInfo(buildMode, package, group, assetPath, isRawAsset);
+							var collectAssetInfo = CreateCollectAssetInfo(buildMode, package, group, assetPath, isRawAsset, IsAssembly);
 							result.Add(assetPath, collectAssetInfo);
 						}
 						else
@@ -128,7 +130,7 @@ namespace YooAsset.Editor
 				string assetPath = CollectPath;
 				if (IsValidateAsset(assetPath) && IsCollectAsset(assetPath))
 				{
-					var collectAssetInfo = CreateCollectAssetInfo(buildMode, package, group, assetPath, isRawAsset);
+					var collectAssetInfo = CreateCollectAssetInfo(buildMode, package, group, assetPath, isRawAsset, IsAssembly);
 					result.Add(assetPath, collectAssetInfo);
 				}
 				else
@@ -155,12 +157,20 @@ namespace YooAsset.Editor
 			return result.Values.ToList();
 		}
 
-		private CollectAssetInfo CreateCollectAssetInfo(EBuildMode buildMode, AssetBundleCollectorPackage package, AssetBundleCollectorGroup group, string assetPath, bool isRawAsset)
+		private CollectAssetInfo CreateCollectAssetInfo(EBuildMode buildMode, AssetBundleCollectorPackage package, AssetBundleCollectorGroup group, string assetPath, bool isRawAsset, bool isAssembly)
 		{
 			string address = GetAddress(group, assetPath);
 			string bundleName = GetBundleName(group, assetPath);
 			List<string> assetTags = GetAssetTags(group);
-			CollectAssetInfo collectAssetInfo = new CollectAssetInfo(CollectorType, package.PackageName, package.IncludeInBuild, bundleName, address, assetPath, assetTags, isRawAsset);
+			CollectAssetInfo collectAssetInfo = new CollectAssetInfo(CollectorType, 
+				package.PackageName,
+				package.IncludeInBuild, 
+				bundleName, 
+				address, 
+				assetPath, 
+				assetTags, 
+				isRawAsset,
+				isAssembly);
 
 			// 注意：模拟构建模式下不需要收集依赖资源
 			if (buildMode == EBuildMode.SimulateBuild)

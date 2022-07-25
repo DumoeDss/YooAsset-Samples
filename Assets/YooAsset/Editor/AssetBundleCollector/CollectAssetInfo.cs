@@ -42,13 +42,23 @@ namespace YooAsset.Editor
 		/// </summary>
 		public bool IsRawAsset { private set; get; }
 
+		public bool IsAssemblyAsset { private set; get; }
+
 		/// <summary>
 		/// 依赖的资源列表
 		/// </summary>
 		public List<string> DependAssets = new List<string>();
 
 
-		public CollectAssetInfo(ECollectorType collectorType, string packageName, bool includeInBuild, string bundleName, string address, string assetPath, List<string> assetTags, bool isRawAsset)
+		public CollectAssetInfo(ECollectorType collectorType, 
+			string packageName, 
+			bool includeInBuild, 
+			string bundleName, 
+			string address, 
+			string assetPath, 
+			List<string> assetTags, 
+			bool isRawAsset,
+			bool isAssemblyAsset)
 		{
 			CollectorType = collectorType;
 			PackageName= packageName;
@@ -58,6 +68,7 @@ namespace YooAsset.Editor
 			AssetPath = assetPath;
 			AssetTags = assetTags;
 			IsRawAsset = isRawAsset;
+			IsAssemblyAsset = isAssemblyAsset;
 		}
 	}
 }

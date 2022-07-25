@@ -17,6 +17,32 @@ namespace YooAsset.Editor
 
 		public bool IncludeInBuild { private set; get; }
 
+		public bool IsAssemblyAsset
+		{
+			get
+			{
+				foreach (var asset in BuildinAssets)
+				{
+					if (asset.IsAssemblyAsset)
+						return true;
+				}
+				return false;
+			}
+		}
+
+		public string AssemblyAddresses
+        {
+            get
+            {
+				string assembly = string.Empty;
+				foreach (var asset in BuildinAssets)
+				{
+					if (asset.IsAssemblyAsset)
+						assembly += asset.Address + ";";
+				}
+				return assembly;
+			}
+        }
 
 		/// <summary>
 		/// 参与构建的资源列表

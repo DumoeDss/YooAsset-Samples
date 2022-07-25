@@ -43,10 +43,31 @@ namespace YooAsset.Editor
 				patchManifest.BuildinTags = buildParameters.Parameters.BuildinTags;
 				patchManifest.PackageName = bundle.Key;
 				patchManifest.BundleList = bundle.Value;
+				patchManifest.AssemblyAddresses = new List<string>();
+				var assemblyBundle = patchManifest.BundleList.Select(_ => _).Where(_ => _.IsAssemblyAsset);
+				if(assemblyBundle!= null)
+				{
+					var assemblyBundleList= assemblyBundle.ToList();
+                    foreach (var item in assemblyBundleList)
+                    {
+						var assemblyAddresses = item.AssemblyAddresses.Split(';');
+                        for (int i = 0; i < assemblyAddresses.Length; i++)
+                        {
+                            if (!string.IsNullOrEmpty(assemblyAddresses[i]))
+                            {
+								patchManifest.AssemblyAddresses.Add(assemblyAddresses[i]);
+
+							}
+						}
+
+					}
+				}
 				//patchManifest.DependPackages = new List<string>();
 
 				var patchAssets = GetAllPatchAsset(buildParameters, buildMapContext, patchManifest.PackageName);
 				patchManifest.AssetList=patchAssets.Select(_=>_).Where(_=>!string.IsNullOrEmpty(_.Address)).ToList();
+
+
 				//foreach (var item in patchManifest.AssetList)
 				//{
 				//	if (item.DependIDs != null)
@@ -153,14 +174,15 @@ namespace YooAsset.Editor
 				bool isEncrypted = encryptionContext.IsEncryptFile(bundleName);
 				bool isBuildin = IsBuildinBundle(tags, buildinTags);
 				bool isRawFile = bundleInfo.IsRawFile;
-
+				bool isAssemblyAsset = bundleInfo.IsAssemblyAsset;
+				string assemblyAddresses = bundleInfo.AssemblyAddresses;
 				// 附加文件扩展名
 				if (buildParameters.Parameters.AppendFileExtension)
 				{
 					hash += bundleInfo.GetAppendExtension();
 				}
 
-				PatchBundle patchBundle = new PatchBundle(package, bundleName, hash, crc32, size, tags);
+				PatchBundle patchBundle = new PatchBundle(package, bundleName, hash, crc32, size, tags, isAssemblyAsset, assemblyAddresses);
 				patchBundle.SetFlagsValue(isEncrypted, isBuildin, isRawFile);
 				result[package].Add(patchBundle);
 			}

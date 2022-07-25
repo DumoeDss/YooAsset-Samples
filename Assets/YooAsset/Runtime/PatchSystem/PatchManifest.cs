@@ -34,6 +34,8 @@ namespace YooAsset
 		/// </summary>
 		public List<PatchBundle> BundleList = new List<PatchBundle>();
 
+		public List<string> AssemblyAddresses = new List<string>();
+
 
 		/// <summary>
 		/// 资源包集合（提供BundleName获取PatchBundle）

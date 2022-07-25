@@ -39,6 +39,8 @@ namespace YooAsset.Editor
 		/// </summary>
 		public bool IsRawAsset { private set; get; }
 
+		public bool IsAssemblyAsset { private set; get; }
+
 		/// <summary>
 		/// 是否为着色器资源
 		/// </summary>
@@ -71,7 +73,8 @@ namespace YooAsset.Editor
 			AssetPath = clone.AssetPath;
 			IsRawAsset = clone.IsRawAsset;
 			IsShaderAsset = clone.IsShaderAsset;
-			if(clone.AllDependAssetInfos!=null)
+			IsAssemblyAsset=clone.IsAssemblyAsset;
+			if (clone.AllDependAssetInfos!=null)
 				AllDependAssetInfos = new List<BuildAssetInfo>(clone.AllDependAssetInfos);
 			AssetTags = new List<string>(clone.AssetTags);
 			BundleTags = new List<string>(clone.BundleTags);
@@ -79,7 +82,8 @@ namespace YooAsset.Editor
 		}
 
 		public BuildAssetInfo(ECollectorType collectorType,string package, bool includeInBuild,
-			string mainBundleName, string address, string assetPath, bool isRawAsset)
+			string mainBundleName, string address, string assetPath, bool isRawAsset,
+			bool isAssemblyAsset)
 		{
 
 			_mainBundleName = mainBundleName;
@@ -89,6 +93,7 @@ namespace YooAsset.Editor
 			IncludeInBuild=includeInBuild;
 			AssetPath = assetPath;
 			IsRawAsset = isRawAsset;
+			IsAssemblyAsset = isAssemblyAsset;
 
 			System.Type assetType = UnityEditor.AssetDatabase.GetMainAssetTypeAtPath(assetPath);
 			if (assetType == typeof(UnityEngine.Shader))
@@ -104,7 +109,7 @@ namespace YooAsset.Editor
 			IncludeInBuild = includeInBuild;
 			AssetPath = assetPath;
 			IsRawAsset = false;
-
+			IsAssemblyAsset = false;
 			System.Type assetType = UnityEditor.AssetDatabase.GetMainAssetTypeAtPath(assetPath);
 			if (assetType == typeof(UnityEngine.Shader))
 				IsShaderAsset = true;
